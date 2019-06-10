@@ -473,6 +473,7 @@ public class ControllerCadastroEmpresa implements Initializable, ModeloCafePerfe
             getCboEndMunicipio().getSelectionModel().selectFirst();
         });
 
+
         getTxtCNPJ().addEventHandler(KeyEvent.KEY_PRESSED, event -> {
             if (event.getCode() == KeyCode.ENTER) {
                 setPattern(Pattern.compile(REGEX_CNPJ_CPF, Pattern.CASE_INSENSITIVE));
