@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src/main/java"/>
+	<classpathentry kind="src" path="src/test/java"/>
+	<classpathentry kind="lib" path="lib/wsdlNfe_400.jar"/>
+	<classpathentry kind="lib" path="lib/xsdConfigSistema.jar"/>
+	<classpathentry kind="lib" path="lib/xsdCte.jar"/>
+	<classpathentry kind="lib" path="lib/xsdNfe.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="/Volumes/150GB-Development/Bibliotecas/iReportLibrary/6.8/jasperreports-6.8.0.jar"/>
+	<classpathentry kind="lib" path="/Volumes/150GB-Development/Bibliotecas/iReportLibrary/6.8/jasperreports-annotation-processors-6.8.0.jar"/>
+	<classpathentry kind="lib" path="/Volumes/150GB-Development/Bibliotecas/iReportLibrary/6.8/jasperreports-chart-customizers-6.8.0.jar"/>
+	<classpathentry kind="lib" path="/Volumes/150GB-Development/Bibliotecas/iReportLibrary/6.8/jasperreports-chart-themes-6.8.0.jar"/>
+	<classpathentry kind="lib" path="/Volumes/150GB-Development/Bibliotecas/iReportLibrary/6.8/jasperreports-custom-visualization-6.8.0.jar"/>
+	<classpathentry kind="lib" path="/Volumes/150GB-Development/Bibliotecas/iReportLibrary/6.8/jasperreports-fonts-6.8.0.jar"/>
+	<classpathentry kind="lib" path="/Volumes/150GB-Development/Bibliotecas/iReportLibrary/6.8/jasperreports-functions-6.8.0.jar"/>
+	<classpathentry kind="lib" path="/Volumes/150GB-Development/Bibliotecas/iReportLibrary/6.8/jasperreports-javaflow-6.8.0.jar"/>
+	<classpathentry kind="lib" path="/Volumes/150GB-Development/Bibliotecas/iReportLibrary/6.8/jasperreports-metadata-6.8.0.jar"/>
+	<classpathentry kind="output" path="target/classes"/>
+</classpath>

@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<nfeProc versao="4.00" xmlns="http://www.portalfiscal.inf.br/nfe">
+    <NFe xmlns="http://www.portalfiscal.inf.br/nfe">
+        <infNFe versao="4.00" Id="NFe35181006981833000248550010000001061104075382">
+            <ide>
+                <cUF>35</cUF>
+                <cNF>10407538</cNF>
+                <natOp>VENDA PARA FORA DO ESTADO</natOp>
+                <mod>55</mod>
+                <serie>1</serie>
+                <nNF>106</nNF>
+                <dhEmi>2018-10-03T00:00:00-03:00</dhEmi>
+                <tpNF>1</tpNF>
+                <idDest>2</idDest>
+                <cMunFG>3548708</cMunFG>
+                <tpImp>0</tpImp>
+                <tpEmis>1</tpEmis>
+                <cDV>2</cDV>
+                <tpAmb>1</tpAmb>
+                <finNFe>1</finNFe>
+                <indFinal>1</indFinal>
+                <indPres>0</indPres>
+                <procEmi>0</procEmi>
+                <verProc>4.00</verProc>
+            </ide>
+            <emit>
+                <CNPJ>06981833000248</CNPJ>
+                <xNome>TORREFACAO NISHIDA SAN LTDA ME</xNome>
+                <xFant>TORREFACAO NISHIDA</xFant>
+                <enderEmit>
+                    <xLgr>Av. Antartico</xLgr>
+                    <nro>175</nro>
+                    <xBairro>Vila Sao Joao</xBairro>
+                    <cMun>3548708</cMun>
+                    <xMun>Sao Bernardo do Campo</xMun>
+                    <UF>SP</UF>
+                    <CEP>09726150</CEP>
+                    <cPais>1058</cPais>
+                    <xPais>BRASIL</xPais>
+                    <fone>1141231202</fone>
+                </enderEmit>
+                <IE>635858196113</IE>
+                <CRT>1</CRT>
+            </emit>
+            <dest>
+                <CNPJ>08009246000136</CNPJ>
+                <xNome>T. L. MACEDO</xNome>
+                <enderDest>
+                    <xLgr>RUA TREZE DE MAIO</xLgr>
+                    <nro>159</nro>
+                    <xBairro>COROADO</xBairro>
+                    <cMun>1302603</cMun>
+                    <xMun>MANAUS</xMun>
+                    <UF>AM</UF>
+                    <CEP>69080440</CEP>
+                    <cPais>1058</cPais>
+                    <xPais>BRASIL</xPais>
+                    <fone>9281686148</fone>
+                </enderDest>
+                <indIEDest>1</indIEDest>
+                <IE>042171865</IE>
+                <email>tl.macedo@hotmail.com</email>
+            </dest>
+            <entrega>
+                <CNPJ>08009246000136</CNPJ>
+                <xLgr>TRAVESSA NOVA OLINDA</xLgr>
+                <nro>090</nro>
+                <xCpl>PROX. BATERIA M</xCpl>
+                <xBairro>PETROPOLIS</xBairro>
+                <cMun>1302603</cMun>
+                <xMun>MANAUS</xMun>
+                <UF>AM</UF>
+            </entrega>
+            <det nItem="1">
+                <prod>
+                    <cProd>000002</cProd>
+                    <cEAN>SEM GTIN</cEAN>
+                    <xProd>SUPREMO ARABICA GRAO CLASSICO 1KG</xProd>
+                    <NCM>09012100</NCM>
+                    <CFOP>6102</CFOP>
+                    <uCom>KG</uCom>
+                    <qCom>50.0000</qCom>
+                    <vUnCom>14.0000000000</vUnCom>
+                    <vProd>700.00</vProd>
+                    <cEANTrib>SEM GTIN</cEANTrib>
+                    <uTrib>KG</uTrib>
+                    <qTrib>50.0000</qTrib>
+                    <vUnTrib>14.0000000000</vUnTrib>
+                    <indTot>1</indTot>
+                </prod>
+                <imposto>
+                    <vTotTrib>46.20</vTotTrib>
+                    <ICMS>
+                        <ICMSSN101>
+                            <orig>0</orig>
+                            <CSOSN>101</CSOSN>
+                            <pCredSN>2.2100</pCredSN>
+                            <vCredICMSSN>15.47</vCredICMSSN>
+                        </ICMSSN101>
+                    </ICMS>
+                    <IPI>
+                        <cEnq>999</cEnq>
+                        <IPINT>
+                            <CST>53</CST>
+                        </IPINT>
+                    </IPI>
+                    <PIS>
+                        <PISOutr>
+                            <CST>99</CST>
+                            <vBC>0.00</vBC>
+                            <pPIS>0.0000</pPIS>
+                            <vPIS>0.00</vPIS>
+                        </PISOutr>
+                    </PIS>
+                    <COFINS>
+                        <COFINSOutr>
+                            <CST>99</CST>
+                            <vBC>0.00</vBC>
+                            <pCOFINS>0.0000</pCOFINS>
+                            <vCOFINS>0.00</vCOFINS>
+                        </COFINSOutr>
+                    </COFINS>
+                </imposto>
+            </det>
+            <total>
+                <ICMSTot>
+                    <vBC>0.00</vBC>
+                    <vICMS>0.00</vICMS>
+                    <vICMSDeson>0.00</vICMSDeson>
+                    <vFCP>0.00</vFCP>
+                    <vBCST>0.00</vBCST>
+                    <vST>0.00</vST>
+                    <vFCPST>0.00</vFCPST>
+                    <vFCPSTRet>0.00</vFCPSTRet>
+                    <vProd>700.00</vProd>
+                    <vFrete>0.00</vFrete>
+                    <vSeg>0.00</vSeg>
+                    <vDesc>0.00</vDesc>
+                    <vII>0.00</vII>
+                    <vIPI>0.00</vIPI>
+                    <vIPIDevol>0.00</vIPIDevol>
+                    <vPIS>0.00</vPIS>
+                    <vCOFINS>0.00</vCOFINS>
+                    <vOutro>0.00</vOutro>
+                    <vNF>700.00</vNF>
+                    <vTotTrib>46.20</vTotTrib>
+                </ICMSTot>
+            </total>
+            <transp>
+                <modFrete>1</modFrete>
+                <transporta>
+                    <CNPJ>06186733000220</CNPJ>
+                    <xNome>EXATA CARGO LTDA</xNome>
+                    <IE>336942124118</IE>
+                    <xEnder>R. COLONIA LEOPOLDINA, 376</xEnder>
+                    <xMun>GUARULHOS</xMun>
+                    <UF>SP</UF>
+                </transporta>
+                <vol>
+                    <qVol>10</qVol>
+                    <esp>FARDO</esp>
+                    <pesoL>50.000</pesoL>
+                    <pesoB>50.000</pesoB>
+                </vol>
+            </transp>
+            <cobr>
+                <fat>
+                    <nFat>001</nFat>
+                    <vOrig>700.00</vOrig>
+                    <vDesc>0.01</vDesc>
+                    <vLiq>699.99</vLiq>
+                </fat>
+                <dup>
+                    <nDup>001</nDup>
+                    <dVenc>2018-10-03</dVenc>
+                    <vDup>700.00</vDup>
+                </dup>
+            </cobr>
+            <pag>
+                <detPag>
+                    <tPag>15</tPag>
+                    <vPag>0.00</vPag>
+                </detPag>
+                <detPag>
+                    <tPag>01</tPag>
+                    <vPag>700.00</vPag>
+                </detPag>
+            </pag>
+            <infAdic>
+                <infCpl>EMPRESA OPTANTE PELO SIMPLES Permite o aproveitamento de credito de ICMS no valor de R$ 15,47
+                    correspondente a aliquota de 2,21% nos termos do artigo 23 da LC 123. Valor aproximado Total de
+                    Tributos federais, estaduais e municipais: R$ 46,20
+                </infCpl>
+            </infAdic>
+        </infNFe>
+        <Signature xmlns="http://www.w3.org/2000/09/xmldsig#">
+            <SignedInfo>
+                <CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
+                <SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
+                <Reference URI="#NFe35181006981833000248550010000001061104075382">
+                    <Transforms>
+                        <Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
+                        <Transform Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
+                    </Transforms>
+                    <DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
+                    <DigestValue>a92CAERShT0d58iLzMj40w0RNh4=</DigestValue>
+                </Reference>
+            </SignedInfo>
+            <SignatureValue>
+                txRPseDmV/0p7pEiVFcejzX4l9pJR34AozVbsgRrWxt5QoYlrxlY90CzOlcxMgJXJakHMt1KSfcSWX08xePGi4csAMWfj1kMXU1QzDH/HJBcAA9yz+zDWe39EMV6M9Dt+KIUwaTxQoJ8q+OVfEIrvxgwPFKglzmRlNLyH6dsJRpjkCg+CkFmyBf3f5B5PEGELDEBonF4qErtJK1mUS28uH67T0YhMcBIlcjELp3TmS1p/NeJ05ap5UOOQ4LHGZNsQFCZWE6atPv9eGUgfPNKDB2tJgXWwowXousf9JgbgTZwCvmIL1XCLgGNRJlHDxb+U4rdu07hM5bwsVEjh8Fdhg==
+            </SignatureValue>
+            <KeyInfo>
+                <X509Data>
+                    <X509Certificate>
+                        MIIIazCCBlOgAwIBAgIQFKD5PPqe/wdiaSd8xF/SbjANBgkqhkiG9w0BAQsFADB4MQswCQYDVQQGEwJCUjETMBEGA1UEChMKSUNQLUJyYXNpbDE2MDQGA1UECxMtU2VjcmV0YXJpYSBkYSBSZWNlaXRhIEZlZGVyYWwgZG8gQnJhc2lsIC0gUkZCMRwwGgYDVQQDExNBQyBDZXJ0aXNpZ24gUkZCIEc0MB4XDTE2MDUxMzAwMDAwMFoXDTE5MDUxMjIzNTk1OVowggEAMQswCQYDVQQGEwJCUjETMBEGA1UEChQKSUNQLUJyYXNpbDELMAkGA1UECBMCU1AxHjAcBgNVBAcUFVNBTyBCRVJOQVJETyBETyBDQU1QTzE2MDQGA1UECxQtU2VjcmV0YXJpYSBkYSBSZWNlaXRhIEZlZGVyYWwgZG8gQnJhc2lsIC0gUkZCMRYwFAYDVQQLFA1SRkIgZS1DTlBKIEEzMScwJQYDVQQLFB5BdXRlbnRpY2FkbyBwb3IgQVIgUG9sb21hc3RoZXIxNjA0BgNVBAMTLVRPUlJFRkFDQU8gTklTSElEQSBTQU4gTFREQSBNRTowNjk4MTgzMzAwMDI0ODCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBANg875/XtAVd0Xf01te5RYiSX0vIPnAAvaKAeA+iSd8HYhk3v3I/bwch8g1DIV349prCgGnBjXiHNvsr1SHCJSXDf6yMQmbckFotpLPqdEJRpBJqvKSXrRHpjYdEdn7LYJW7chXvKvtc1W8gXYdtx0c7c0kqOwd5D+KKJhzLVVDw7Efek0zBcrpXwYysLvSiQoAkxb12zw3354kaAADteQYQCXBi8WuidT6r9AOZxY3ZR9ICQedXtxq3ZbifVu2cPq3xTyd4ragB/QDdmgrWjTKBbdJrgSNyOq5HsPXSAtXbsm9ewNjsFjrJoCURS8RuSRIezxUUukMOrzQ87uX2DGMCAwEAAaOCA2UwggNhMIHKBgNVHREEgcIwgb+gPQYFYEwBAwSgNAQyMDYwMzE5ODMwNTU1MjY3NzY4NDAwMDAwMDAwMDAwMDAwMDAwMDM4MjgwODg4U1NQU1CgLAYFYEwBAwKgIwQhREFJQU5BIE1BUkdBUkVUSCBEQSBTSUxWQSBOSVNISURBoBkGBWBMAQMDoBAEDjA2OTgxODMzMDAwMjQ4oBcGBWBMAQMHoA4EDDAwMDAwMDAwMDAwMIEcZGFpYW5hQHN1cHJlbW9hcmFiaWNhLmNvbS5icjAJBgNVHRMEAjAAMB8GA1UdIwQYMBaAFC6R6tZt5bJZgtw4hSl2NBZWPNA+MA4GA1UdDwEB/wQEAwIF4DB/BgNVHSAEeDB2MHQGBmBMAQIDBjBqMGgGCCsGAQUFBwIBFlxodHRwOi8vaWNwLWJyYXNpbC5jZXJ0aXNpZ24uY29tLmJyL3JlcG9zaXRvcmlvL2RwYy9BQ19DZXJ0aXNpZ25fUkZCL0RQQ19BQ19DZXJ0aXNpZ25fUkZCLnBkZjCCARYGA1UdHwSCAQ0wggEJMFegVaBThlFodHRwOi8vaWNwLWJyYXNpbC5jZXJ0aXNpZ24uY29tLmJyL3JlcG9zaXRvcmlvL2xjci9BQ0NlcnRpc2lnblJGQkc0L0xhdGVzdENSTC5jcmwwVqBUoFKGUGh0dHA6Ly9pY3AtYnJhc2lsLm91dHJhbGNyLmNvbS5ici9yZXBvc2l0b3Jpby9sY3IvQUNDZXJ0aXNpZ25SRkJHNC9MYXRlc3RDUkwuY3JsMFagVKBShlBodHRwOi8vcmVwb3NpdG9yaW8uaWNwYnJhc2lsLmdvdi5ici9sY3IvQ2VydGlzaWduL0FDQ2VydGlzaWduUkZCRzQvTGF0ZXN0Q1JMLmNybDAdBgNVHSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwQwgZsGCCsGAQUFBwEBBIGOMIGLMF8GCCsGAQUFBzAChlNodHRwOi8vaWNwLWJyYXNpbC5jZXJ0aXNpZ24uY29tLmJyL3JlcG9zaXRvcmlvL2NlcnRpZmljYWRvcy9BQ19DZXJ0aXNpZ25fUkZCX0c0LnA3YzAoBggrBgEFBQcwAYYcaHR0cDovL29jc3AuY2VydGlzaWduLmNvbS5icjANBgkqhkiG9w0BAQsFAAOCAgEAXMh/I29glY3SQmRNbcupeYjR5aGb2qslq/SdAKmNKWLXzZPr7BvYfWPKPhsC8yBFGViem+d3jkfHSqgjoy5capolcM22Tt4ACyopsihsW8iljJrO9otIQr879UaYJmrRA223nwpuFK9aSnAnM16G+ucDETjT7Dwv5jhr0yyj5k+Apq1iSyQIoo2AGli95GJ2pDlmBmuo57QiQfNTZq5sElPpNEMyV+abUDl5CSEryrx985uCgtruym/kckT8uBC3Zf96lleLQgOAXWQNLauzT+C21nxTxNimlM1kHzxegFkPtfEa38S/eZh+euusk3wRUgxQ8yVoWrxQ6OcgqmPlxR1EeKU8+sxHdQ9BsvTtM/HeQTvZcoKBLl0LY5oDaaITQOozaMCjuvODZgAzW1h1NyZkxkJcGYKfg0Chli2DgY3b2vvH8ICTIK7eFKdbnaQRng4ziDrL+9F6oYrSkVXLKyFXb/LCrWQyRdYGSJgnT8ISSdWlpAp19zkVE6n8Cq+IStS17jfVUrxFRA2Y+IqCLXEVCKvr2UynnufW7fP0wuF657ciG1oCz+ygcX4EZG5Ok3NXW5ePW4NXZrrwjH3GDHmjRjjY4nhcjGkU63xJ4GPhHTW0cSVUBbt92npT0jrV8MyUU2XT8llwQfKjPYN6pyJ/Jnr+P5GAkPL0D7xPEdI=
+                    </X509Certificate>
+                </X509Data>
+            </KeyInfo>
+        </Signature>
+    </NFe>
+    <protNFe versao="4.00">
+        <infProt>
+            <tpAmb>1</tpAmb>
+            <verAplic>SP_NFE_PL009_V4</verAplic>
+            <chNFe>35181006981833000248550010000001061104075382</chNFe>
+            <dhRecbto>2018-10-03T13:43:40-03:00</dhRecbto>
+            <nProt>135180677167165</nProt>
+            <digVal>a92CAERShT0d58iLzMj40w0RNh4=</digVal>
+            <cStat>100</cStat>
+            <xMotivo>Autorizado o uso da NF-e</xMotivo>
+        </infProt>
+    </protNFe>
+</nfeProc>
