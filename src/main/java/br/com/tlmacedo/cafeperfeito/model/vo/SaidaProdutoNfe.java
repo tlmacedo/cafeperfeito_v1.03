@@ -66,6 +66,7 @@ public class SaidaProdutoNfe implements Serializable {
     }
 
     @OneToOne
+    @JoinColumn(name = "saidaProduto_id", foreignKey = @ForeignKey(name = "fk_saida_produto_nfe_saida_produto"))
     public SaidaProduto getSaidaProduto() {
         return saidaProduto;
     }
