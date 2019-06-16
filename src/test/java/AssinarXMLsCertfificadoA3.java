@@ -3,6 +3,10 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import javax.security.auth.callback.Callback;
+import javax.security.auth.callback.CallbackHandler;
+import javax.security.auth.callback.PasswordCallback;
+import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.xml.crypto.dsig.*;
 import javax.xml.crypto.dsig.dom.DOMSignContext;
 import javax.xml.crypto.dsig.keyinfo.KeyInfo;
@@ -32,6 +36,8 @@ public class AssinarXMLsCertfificadoA3 {
 
     private PrivateKey privateKey;
     private KeyInfo keyInfo;
+    private KeyPairGenerator kpg;
+    private KeyPair pair;
 
     public static void main(String[] args) {
         try {
@@ -44,7 +50,7 @@ public class AssinarXMLsCertfificadoA3 {
              * fileEnviNFe = Caminho do Arquivo XML (EnviNFe) gerado;
              */
             info("");
-            String fileEnviNFe = "/Volumes/150GB-Development/cafeperfeito/cafeperfeito/src/main/resources/xml/nfe/out/NFe13190608009246000136550010000008671201906058.xml";
+            String fileEnviNFe = "/Volumes/150GB-Development/cafeperfeito/cafeperfeito_v1.03/src/main/resources/xml/nfe/out/NFe13190608009246000136550010000008671201906058.xml";
             String xmlEnviNFe = lerXML(fileEnviNFe);
             String xmlEnviNFeAssinado = assinarXMLsCertfificadoA3.assinaEnviNFe(
                     xmlEnviNFe, senhaDoCertificadoDoCliente);
@@ -152,6 +158,10 @@ public class AssinarXMLsCertfificadoA3 {
                         .newSignatureMethod(SignatureMethod.RSA_SHA1, null),
                 Collections.singletonList(ref));
 
+//        KeyInfoFactory kif = signatureFactory.getKeyInfoFactory();
+//        KeyValue kv = kif.newKeyValue(pair.getPublic());
+//        KeyInfo ki = kif.newKeyInfo(List.of(kv));
+
         XMLSignature signature = signatureFactory.newXMLSignature(si, keyInfo);
 
         DOMSignContext dsc = new DOMSignContext(privateKey, document.getFirstChild());
@@ -193,23 +203,28 @@ public class AssinarXMLsCertfificadoA3 {
          */
         System.setProperty("senhaDoCertificado", "4879");
 
-        String configName = "/Volumes/150GB-Development/cafeperfeito/cafeperfeito/src/main/resources/certificado/tokenSafeNet5100.cfg";
+        String configName = "/Volumes/150GB-Development/cafeperfeito/cafeperfeito_v1.03/src/main/resources/certificado/tokenSafeNet5100.cfg";
+
         Provider p = Security.getProvider("SunPKCS11");
-//        if (p == null) {
-            p = p.configure(configName);
-            Security.addProvider(p);
-//        }
+        p = p.configure(configName);
+        Security.addProvider(p);
 
         char[] pin = System.getProperty("senhaDoCertificado").toCharArray();
-        KeyStore ks = KeyStore.getInstance("PKCS11", p);
-        ks.load(null, pin);
+//        KeyStore ks = KeyStore.getInstance("PKCS11", p);
+//        ks.load(null, pin);
 
-//        KeyStore ks = new KeyStoreFactory().instanceOfA3("/Volumes/150GB-Development/cafeperfeito/cafeperfeito/src/main/resources/certificado/tokenSafeNet5100.cfg", "4879");
+        KeyStore.CallbackHandlerProtection chp =
+                new KeyStore.CallbackHandlerProtection(new MyGuiCallbackHandler());
+        KeyStore.Builder builder =
+                KeyStore.Builder.newInstance("PKCS11", p, chp);
+
+        KeyStore ks = builder.getKeyStore();
 
         KeyStore.PrivateKeyEntry pkEntry = null;
+        String alias = null;
         Enumeration<String> aliasesEnum = ks.aliases();
         while (aliasesEnum.hasMoreElements()) {
-            String alias = (String) aliasesEnum.nextElement();
+            alias = (String) aliasesEnum.nextElement();
             if (ks.isKeyEntry(alias)) {
                 pkEntry = (KeyStore.PrivateKeyEntry) ks.getEntry(alias,
                         new KeyStore.PasswordProtection(senha.toCharArray()));
@@ -217,6 +232,16 @@ public class AssinarXMLsCertfificadoA3 {
                 break;
             }
         }
+
+//        Certificate certificate = ks.getCertificate(alias);
+//        PublicKey publicKey = certificate.getPublicKey();
+//        privateKey = pkEntry.getPrivateKey();
+//        pair = new KeyPair(publicKey, privateKey);
+
+//        KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");
+//        generator.initialize(2048, new SecureRandom());
+//        KeyPair pair = generator.generateKeyPair();
+
 
         X509Certificate cert = (X509Certificate) pkEntry.getCertificate();
         info("SubjectDN: " + cert.getSubjectDN().toString());
@@ -227,6 +252,7 @@ public class AssinarXMLsCertfificadoA3 {
         x509Content.add(cert);
         X509Data x509Data = keyInfoFactory.newX509Data(x509Content);
         keyInfo = keyInfoFactory.newKeyInfo(Collections.singletonList(x509Data));
+
     }
 
     private String outputXML(Document doc) throws TransformerException {
@@ -272,6 +298,21 @@ public class AssinarXMLsCertfificadoA3 {
      */
     private static void info(String info) {
         System.out.println("| INFO: " + info);
+    }
+
+    private static class MyGuiCallbackHandler implements CallbackHandler {
+
+        public MyGuiCallbackHandler() {
+            System.out.println("Sending PIN from callback...");
+        }
+
+        public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
+            for (int i = 0; i < callbacks.length; i++) {
+                PasswordCallback pc = (PasswordCallback) callbacks[i];
+                String pin = System.getProperty("senhaDoCertificado");
+                pc.setPassword(pin.toCharArray());
+            }
+        }
     }
 
 }

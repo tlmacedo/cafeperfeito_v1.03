@@ -687,8 +687,11 @@ public class ControllerSaidaProduto implements Initializable, ModeloCafePerfeito
 
             getSaidaProduto().setSaidaProdutoProdutoList(getModelSaidaProdutoProduto().getSaidaProdutoProdutoObservableList().stream().collect(Collectors.toList()));
 
-            if (getTpnNfeVenda().isExpanded())
+            if (getTpnNfeVenda().isExpanded()) {
                 if (!guardarValidarNfe()) return false;
+            } else {
+                getSaidaProduto().setNfe(null);
+            }
         } catch (Exception ex) {
             ex.printStackTrace();
             return false;

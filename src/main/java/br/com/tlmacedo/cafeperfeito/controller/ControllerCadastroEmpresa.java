@@ -489,7 +489,7 @@ public class ControllerCadastroEmpresa implements Initializable, ModeloCafePerfe
                         getAlertMensagem().getRetornoAlert_OK();
                         getTxtCNPJ().requestFocus();
                         return;
-                    } else if (getModelEmpresa().jaExiste(getMatcher().group(), getEmpresa().getId())) {
+                    } else if (getModelEmpresa().jaExiste(getMatcher().group(), getEmpresa().getId(), true)) {
                         getTxtCNPJ().requestFocus();
                         return;
                     } else {
@@ -706,7 +706,10 @@ public class ControllerCadastroEmpresa implements Initializable, ModeloCafePerfe
             if (getMatcher().find())
                 getEmpresa().setDataAbetura(LocalDate.parse(getMatcher().group(), DTF_DATA).atTime(0, 0, 0));
 
-            getEmpresa().setNaturezaJuridica(getLblNaturezaJuridica().getText().substring(19));
+            if (getLblNaturezaJuridica().getText().length() > 19)
+                getEmpresa().setNaturezaJuridica(getLblNaturezaJuridica().getText().substring(19));
+            else
+                getEmpresa().setNaturezaJuridica("");
             getEmpresa().setObservacoes(getTxaObservacoes().getText());
             getEmpresa().setLimite(ServiceMascara.getBigDecimalFromTextField(getTxtLimite().getText(), 2));
             getEmpresa().setPrazo(Integer.parseInt(getTxtPrazo().getText()));
@@ -716,7 +719,10 @@ public class ControllerCadastroEmpresa implements Initializable, ModeloCafePerfe
             ex.printStackTrace();
             return false;
         }
-        return validacao();
+        if (getCboClassificacaoJuridica().equals(ClassificacaoJuridica.PESSOAJURIDICA))
+            return validacao();
+        else
+            return true;
     }
 
     private boolean guardarEndereco(Endereco endAntigo) {
@@ -746,9 +752,15 @@ public class ControllerCadastroEmpresa implements Initializable, ModeloCafePerfe
     }
 
     private boolean salvarEmpresa() {
-        if (getEmpresa().getId() > 0 && getEmpresa() != getEmpresaObservableList().stream().filter(empresa1 -> empresa1.getId() == getEmpresa().getId()).findFirst().orElse(null)) {
-            getEmpresa().setUsuarioAtualizacao(LogadoInf.getUserLog());
-            getEmpresa().setDataAtualizacao(LocalDateTime.now());
+        if (getEmpresa().getId() == 0) {
+            getEmpresa().setUsuarioCadastro(LogadoInf.getUserLog());
+            getEmpresa().setUsuarioAtualizacao(null);
+            getEmpresa().setDataAtualizacao(null);
+        } else {
+            if (getEmpresa() != getEmpresaObservableList().stream().filter(empresa1 -> empresa1.getId() == getEmpresa().getId()).findFirst().orElse(null)) {
+                getEmpresa().setUsuarioAtualizacao(LogadoInf.getUserLog());
+                getEmpresa().setDataAtualizacao(LocalDateTime.now());
+            }
         }
         setEmpresa(getEmpresaDAO().persiste(getEmpresa()));
         return (getEmpresaDAO() != null);
@@ -812,6 +824,8 @@ public class ControllerCadastroEmpresa implements Initializable, ModeloCafePerfe
         getChkIsCliente().setSelected(getEmpresa().isCliente());
         getChkIsFornecedor().setSelected(getEmpresa().isFornecedor());
         getChkIsTransportadora().setSelected(getEmpresa().isTransportadora());
+
+        //getEmpresa().getEmailHomePageList().stream().forEach(emailHomePage -> System.out.printf("email: [%s]\n",emailHomePage));
 
         getEmailHomePageObservableList().setAll(getEmpresa().getEmailHomePageList());
         getTelefoneObservableList().setAll(getEmpresa().getTelefoneList());
@@ -1291,7 +1305,12 @@ public class ControllerCadastroEmpresa implements Initializable, ModeloCafePerfe
         Set<ConstraintViolation<Empresa>> constraintViolation = validator.validate(getEmpresa());
         if (constraintViolation.size() > 0) {
             for (ConstraintViolation<Empresa> violation : constraintViolation)
-                System.out.printf("violation.getMessage(): [%s]\n", violation.getMessage());
+                if (violation.getMessage().contains("CNPJ") && getEmpresa().getClassifJuridica().equals(ClassificacaoJuridica.PESSOAFISICA)) {
+                    if (constraintViolation.size() == 1)
+                        return true;
+                } else {
+                    System.out.printf("violation.getMessage(): [%s]\n", violation.getMessage());
+                }
             return false;
         } else {
             System.out.printf("Valido!!!");

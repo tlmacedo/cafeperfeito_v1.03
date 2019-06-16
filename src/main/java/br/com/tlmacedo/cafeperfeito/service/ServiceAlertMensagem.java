@@ -323,7 +323,6 @@ public class ServiceAlertMensagem extends JFrame {
         });
 
         dialogTask.setOnSucceeded(event -> {
-            System.out.printf("dialogTask.setOnSucceeded==>> [%s]\n", true);
             dialogResultProgressBar = true;
             timelineContagemRegressiva.stop();
             if (showAndWait) {

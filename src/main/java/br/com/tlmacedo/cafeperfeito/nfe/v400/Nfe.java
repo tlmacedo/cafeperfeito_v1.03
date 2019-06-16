@@ -264,7 +264,7 @@ public class Nfe {
          */
         emit.setXFant(loja.getFantasia());
 
-        emit.setEnderEmit(getNewEnderEmi(loja.getEnderecoNFe(), loja.getTelefone().getDescricao()));
+        //*****************emit.setEnderEmit(getNewEnderEmi(loja.getEnderecoNFe(), loja.getTelefone().getDescricao()));
 
         /**Inscrição Estadual do Emitente
          * Informar somente os algarismos, sem os caracteres de formatação (ponto, barra, hífen, etc.).
@@ -506,7 +506,7 @@ public class Nfe {
         /**
          * Grupo obrigatório para a NF-e (modelo 55).
          */
-        dest.setEnderDest(getNewEndereco(destinatario.getEnderecoNFe(), destinatario.getTelefone().getDescricao()));
+        //*****************dest.setEnderDest(getNewEndereco(destinatario.getEnderecoNFe(), destinatario.getTelefone().getDescricao()));
 
 //        if (destinatario.getEnderecoNFeEntrega() != null)
 //            getTnFe().getInfNFe().setEntrega(getNewEntrega(destinatario.getEnderecoNFeEntrega()));
@@ -547,7 +547,7 @@ public class Nfe {
         /**email
          * Campo pode ser utilizado para informar o e-mail de recepção da NF-e indicada pelo destinatário (v2.0)
          */
-        dest.setEmail(destinatario.getEmailPrincipal());
+        //*****************dest.setEmail(destinatario.getEmailPrincipal());
 
         //return dest;
     }
@@ -625,11 +625,11 @@ public class Nfe {
          * Preencher com o Código DDD + número do telefone.
          * Nas operações com exterior é permitido informar o código do país + código da localidade + número do telefone (v2.0)
          */
-        tLocal.setFone(ServiceMascara.getTelefone(emp.getTelefone().getDescricao()));
+        //*****************tLocal.setFone(ServiceMascara.getTelefone(emp.getTelefone().getDescricao()));
 
         /**Endereço de e-mail do Recebedor
          */
-        tLocal.setEmail(emp.getEmailPrincipal());
+        //*****************tLocal.setEmail(emp.getEmailPrincipal());
 
         return tLocal;
     }
@@ -1677,7 +1677,7 @@ public class Nfe {
 
         /**Endereço Completo
          */
-        transporta.setXEnder(getSaidaProduto().getNfe().getTransportador().getEnderecoPrincipal());
+        //*****************transporta.setXEnder(getSaidaProduto().getNfe().getTransportador().getEnderecoPrincipal());
 
         /**Nome do município
          */

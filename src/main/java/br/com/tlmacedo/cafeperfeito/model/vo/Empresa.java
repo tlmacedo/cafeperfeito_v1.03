@@ -13,7 +13,6 @@ import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 import javafx.beans.property.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.hibernate.validator.constraints.br.CNPJ;
 import org.json.JSONObject;
 
 import javax.persistence.*;
@@ -127,78 +126,80 @@ public class Empresa extends RecursiveTreeObject<Empresa> implements Serializabl
     }
 
     public static boolean setWsEmpresa_ReceitaWs(Empresa empresa, JSONObject retWs) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        WsEmpresaReceitaWs wsEmpresaReceitaWs = null;
-        if (retWs == null)
-            return false;
         try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            WsEmpresaReceitaWs wsEmpresaReceitaWs = null;
+            if (retWs == null)
+                return false;
             wsEmpresaReceitaWs = objectMapper.readValue(new StringReader(retWs.toString()), WsEmpresaReceitaWs.class);
             if (wsEmpresaReceitaWs.getStatus().toLowerCase().equals("error"))
                 return false;
+
+            empresa.setCnpj(wsEmpresaReceitaWs.getCnpj());
+            empresa.setRazao(wsEmpresaReceitaWs.getNome());
+            empresa.setFantasia(wsEmpresaReceitaWs.getFantasia().equals("") ? "***" : wsEmpresaReceitaWs.getFantasia());
+            empresa.setDataAbetura(wsEmpresaReceitaWs.getAbertura_LocalDAteTime());
+            empresa.setNaturezaJuridica(wsEmpresaReceitaWs.getNatureza_juridica());
+
+            if (wsEmpresaReceitaWs.getSituacao().toLowerCase().equals("ativa")) {
+                if (empresa.getEnderecoList().size() == 0)
+                    empresa.getEnderecoList().add(new Endereco(EnderecoTipo.PRINCIPAL));
+                Endereco endereco = empresa.getEnderecoList().get(0);
+                endereco.setCep(wsEmpresaReceitaWs.getCep());
+                endereco.setLogradouro(wsEmpresaReceitaWs.getLogradouro());
+                endereco.setNumero(wsEmpresaReceitaWs.getNumero());
+                endereco.setComplemento(wsEmpresaReceitaWs.getComplemento());
+                endereco.setBairro(wsEmpresaReceitaWs.getBairro());
+                endereco.setMunicipio(wsEmpresaReceitaWs.getMunicipio_BD());
+                endereco.setProx("");
+                empresa.getEnderecoList().set(0, endereco);
+            } else {
+                empresa.setEnderecoList(new ArrayList<>());
+                switch (wsEmpresaReceitaWs.getSituacao().toLowerCase()) {
+                    case "suspensa":
+                        empresa.setSituacao(SituacaoNoSistema.SUSPENSA);
+                        break;
+                    case "inapta":
+                        empresa.setSituacao(SituacaoNoSistema.INAPTA);
+                        break;
+                    case "baixada":
+                        empresa.setSituacao(SituacaoNoSistema.BAIXADA);
+                        break;
+                }
+            }
+
+            wsEmpresaReceitaWs.getEmailList().stream()
+                    .forEach(email -> {
+                        if (empresa.getEmailHomePageList().stream().noneMatch(e -> e.getDescricao().equals(email)))
+                            empresa.getEmailHomePageList().add(new EmailHomePage(email, WebTipo.EMAIL));
+                    });
+
+            wsEmpresaReceitaWs.getTelefoneList().stream()
+                    .forEach(fone -> {
+                        if (empresa.getTelefoneList().stream().noneMatch(t -> t.getDescricao().equals(fone)))
+                            empresa.getTelefoneList()
+                                    .add(new Telefone(fone, new ServiceConsultaWebServices()
+                                            .getOperadoraTelefone(fone)));
+                    });
+
+            empresa.setInfoReceitaFederalList(wsEmpresaReceitaWs.getInfoReceitaFederalList());
+
+            int index = 0;
+            if (!empresa.getObservacoes().equals("")) {
+                if (empresa.getObservacoes().contains("WebService:")) {
+                    index = empresa.getObservacoes().indexOf("BD_Ws: [");
+                    index += empresa.getObservacoes().substring(index).indexOf("]") + 2;
+                }
+            }
+            empresa.setObservacoes(
+                    String.format("WebService:\nreceitaWs:\tgerouCobrança: [%s]\tBD_Ws: [%s]\n%s",
+                            !wsEmpresaReceitaWs.getBilling().isFree(),
+                            wsEmpresaReceitaWs.getBilling().isDatabase(),
+                            (empresa.getObservacoes().length() > index) ? empresa.getObservacoes().substring(index) : ""));
         } catch (Exception ex) {
             ex.printStackTrace();
             return false;
         }
-
-        empresa.setCnpj(wsEmpresaReceitaWs.getCnpj());
-        empresa.setRazao(wsEmpresaReceitaWs.getNome());
-        empresa.setFantasia(wsEmpresaReceitaWs.getFantasia().equals("") ? "***" : wsEmpresaReceitaWs.getFantasia());
-        empresa.setDataAbetura(wsEmpresaReceitaWs.getAbertura_LocalDAteTime());
-        empresa.setNaturezaJuridica(wsEmpresaReceitaWs.getNatureza_juridica());
-
-        if (wsEmpresaReceitaWs.getSituacao().toLowerCase().equals("ativa")) {
-            Endereco endereco = empresa.getEnderecoList().get(0);
-            endereco.setCep(wsEmpresaReceitaWs.getCep());
-            endereco.setLogradouro(wsEmpresaReceitaWs.getLogradouro());
-            endereco.setNumero(wsEmpresaReceitaWs.getNumero());
-            endereco.setComplemento(wsEmpresaReceitaWs.getComplemento());
-            endereco.setBairro(wsEmpresaReceitaWs.getBairro());
-            endereco.setMunicipio(wsEmpresaReceitaWs.getMunicipio_BD());
-            endereco.setProx("");
-            empresa.getEnderecoList().set(0, endereco);
-        } else {
-            empresa.setEnderecoList(new ArrayList<>());
-            switch (wsEmpresaReceitaWs.getSituacao().toLowerCase()) {
-                case "suspensa":
-                    empresa.setSituacao(SituacaoNoSistema.SUSPENSA);
-                    break;
-                case "inapta":
-                    empresa.setSituacao(SituacaoNoSistema.INAPTA);
-                    break;
-                case "baixada":
-                    empresa.setSituacao(SituacaoNoSistema.BAIXADA);
-                    break;
-            }
-        }
-
-        wsEmpresaReceitaWs.getEmailList().stream()
-                .forEach(email -> {
-                    if (empresa.getEmailHomePageList().stream().noneMatch(e -> e.getDescricao().equals(email)))
-                        empresa.getEmailHomePageList().add(new EmailHomePage(email, WebTipo.EMAIL));
-                });
-
-        wsEmpresaReceitaWs.getTelefoneList().stream()
-                .forEach(fone -> {
-                    if (empresa.getTelefoneList().stream().noneMatch(t -> t.getDescricao().equals(fone)))
-                        empresa.getTelefoneList()
-                                .add(new Telefone(fone, new ServiceConsultaWebServices()
-                                        .getOperadoraTelefone(fone)));
-                });
-
-        empresa.setInfoReceitaFederalList(wsEmpresaReceitaWs.getInfoReceitaFederalList());
-
-        int index = 0;
-        if (!empresa.getObservacoes().equals("")) {
-            if (empresa.getObservacoes().contains("WebService:")) {
-                index = empresa.getObservacoes().indexOf("BD_Ws: [");
-                index += empresa.getObservacoes().substring(index).indexOf("]") + 2;
-            }
-        }
-        empresa.setObservacoes(
-                String.format("WebService:\nreceitaWs:\tgerouCobrança: [%s]\tBD_Ws: [%s]\n%s",
-                        !wsEmpresaReceitaWs.getBilling().isFree(),
-                        wsEmpresaReceitaWs.getBilling().isDatabase(),
-                        (empresa.getObservacoes().length() > index) ? empresa.getObservacoes().substring(index) : ""));
         return true;
     }
 
@@ -206,7 +207,7 @@ public class Empresa extends RecursiveTreeObject<Empresa> implements Serializabl
         return cnpj;
     }
 
-    @CNPJ
+    //@CNPJ
     @Column(length = 14, nullable = false)
     public String getCnpj() {
         return cnpj.get();
@@ -510,6 +511,7 @@ public class Empresa extends RecursiveTreeObject<Empresa> implements Serializabl
     }
 
     @Transient
+    @JsonIgnore
     public String getMunicipio() {
         Endereco end = getEnderecoList().stream()
                 .filter(endereco -> endereco.tipoProperty().get() == EnderecoTipo.PRINCIPAL.getCod())
@@ -519,6 +521,7 @@ public class Empresa extends RecursiveTreeObject<Empresa> implements Serializabl
     }
 
     @Transient
+    @JsonIgnore
     public String getUf() {
         Endereco end = getEnderecoList().stream()
                 .filter(endereco -> endereco.tipoProperty().get() == EnderecoTipo.PRINCIPAL.getCod())
@@ -528,57 +531,62 @@ public class Empresa extends RecursiveTreeObject<Empresa> implements Serializabl
     }
 
     @Transient
+    @JsonIgnore
     public Telefone getTelefone() {
         return getTelefoneList().stream()
                 .findFirst().orElse(null);
     }
 
+    //    @Transient
+//    public Endereco getEnderecoNFe() {
+//        return getEnderecoList().stream()
+//                .filter(endereco -> endereco.tipoProperty().get() == EnderecoTipo.PRINCIPAL.getCod())
+//                .findFirst().orElse(null);
+//    }
+//
+//    @Transient
+//    public Endereco getEnderecoNFeEntrega() {
+//        return getEnderecoList().stream()
+//                .filter(endereco -> endereco.tipoProperty().get() == EnderecoTipo.ENTREGA.getCod())
+//                .findFirst().orElse(null);
+//    }
+//
     @Transient
-    public Endereco getEnderecoNFe() {
-        return getEnderecoList().stream()
-                .filter(endereco -> endereco.tipoProperty().get() == EnderecoTipo.PRINCIPAL.getCod())
-                .findFirst().orElse(null);
-    }
-
-    @Transient
-    public Endereco getEnderecoNFeEntrega() {
-        return getEnderecoList().stream()
-                .filter(endereco -> endereco.tipoProperty().get() == EnderecoTipo.ENTREGA.getCod())
-                .findFirst().orElse(null);
-    }
-
-    @Transient
+    @JsonIgnore
     public String getEnderecoPrincipal() {
         Endereco end = getEnderecoList().stream()
                 .filter(endereco -> endereco.tipoProperty().get() == EnderecoTipo.PRINCIPAL.getCod())
                 .findFirst().orElse(null);
-        if (end == null) return null;
-        return String.format("%s, %s - %s",
+//        if (end == null) return null;
+        return end == null ? "" : String.format("%s, %s - %s",
                 end.logradouroProperty().get(),
                 end.numeroProperty().get(),
                 end.bairroProperty().get());
     }
 
     @Transient
+    @JsonIgnore
     public String getFonePrincipal() {
         Telefone tel = getTelefoneList().stream()
                 .filter(telefone -> Integer.parseInt(telefone.getDescricao().substring(2, 3)) > 6)
                 .findFirst().orElse(null);
-        return tel.getDescricao();
+        return tel == null ? "" : tel.getDescricao();
     }
 
     @Transient
+    @JsonIgnore
     public String getEmailPrincipal() {
         EmailHomePage email = getEmailHomePageList().stream()
                 .filter(emailHomePage -> emailHomePage.getTipo() == WebTipo.EMAIL)
                 .findFirst().orElse(null);
-        return email.toString();
+        return email == null ? "" : email.toString();
     }
 
     @Override
     public String toString() {
         return String.format("%s (%s)", razaoProperty().get(), fantasiaProperty().get());
     }
+
 
 //    @Override
 //    public String toString() {
@@ -611,6 +619,6 @@ public class Empresa extends RecursiveTreeObject<Empresa> implements Serializabl
 //                ", contatoList=" + contatoList +
 //                ", infoReceitaFederalList=" + infoReceitaFederalList +
 //                ", empresaProdutoValorList=" + empresaProdutoValorList +
-//                "} " + super.toString();
+//                '}';
 //    }
 }

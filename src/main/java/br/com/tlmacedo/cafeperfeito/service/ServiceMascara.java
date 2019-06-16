@@ -2,6 +2,7 @@ package br.com.tlmacedo.cafeperfeito.service;
 
 import br.com.tlmacedo.cafeperfeito.model.vo.LogadoInf;
 import br.com.tlmacedo.cafeperfeito.model.vo.enums.CriteriosValidationFields;
+import br.com.tlmacedo.cafeperfeito.model.vo.enums.EnderecoTipo;
 import com.google.common.base.Splitter;
 import com.jfoenix.controls.JFXTextField;
 import javafx.geometry.Pos;
@@ -293,8 +294,13 @@ public class ServiceMascara {
     }
 
     public static String getDataExtenso(String municipio, LocalDate localDate) {
+        if (municipio == null)
+            if (LogadoInf.getLojaUser().getEnderecoList() != null)
+                municipio = LogadoInf.getLojaUser().getEnderecoList().stream().filter(endereco -> endereco.getTipo().equals(EnderecoTipo.PRINCIPAL)).findFirst().orElse(null).getMunicipio().getDescricao();
+            else
+                municipio = TCONFIG.getInfLoja().getMunicipio();
         return String.format("%s,   %02d   de   %s    de    %04d",
-                (municipio == null || municipio == "") ? LogadoInf.getLojaUser().getMunicipio() : municipio,
+                municipio,
                 localDate.getDayOfMonth(),
                 localDate.getMonth().getDisplayName(TextStyle.FULL_STANDALONE, MY_LOCALE),
                 localDate.getYear()

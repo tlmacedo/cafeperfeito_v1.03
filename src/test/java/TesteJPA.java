@@ -1,4 +1,8 @@
-import java.math.BigDecimal;
+import br.com.tlmacedo.cafeperfeito.model.dao.EmpresaDAO;
+import br.com.tlmacedo.cafeperfeito.model.vo.Empresa;
+import br.com.tlmacedo.cafeperfeito.service.ServiceJSonUtil;
+
+import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -11,37 +15,12 @@ public class TesteJPA {
 
     public static void main(String[] args) {
 
-        String returnVal = TesteJPA.divide("1", "5");
+        System.out.printf("qual empresa vc deseja verificar?: ");
+        Empresa empresa = new EmpresaDAO().getById(Empresa.class, Long.valueOf(new Scanner(System.in).nextLine()));
 
-        System.out.println("Test #1: returnVal = " + returnVal);
-
-        returnVal = TesteJPA.divide("1", "2");
-
-        System.out.println("Test #2: returnVal = " + returnVal);
-
-// Test(#3) will fail as the quotient (returnVal)
-//is a non-terminating decimal value.
-
-        returnVal = TesteJPA.divide("1", "3");
-
-        System.out.println("Test #3: returnVal = " + returnVal);
-
-
-        /**
-         * Divide val1 by val2 and return the result as String.
-         *
-         * @param val1
-         * @param val2
-         * @return value as String
-         */}
-
-    public static String divide(String val1, String val2) {
-
-        BigDecimal v1 = new BigDecimal(val1);
-
-        BigDecimal v2 = new BigDecimal(val2);
-
-        return v1.divide(v2).toPlainString();
+        System.out.printf("cnpj: [%s]\n", empresa.getCnpj());
+        System.out.printf(empresa.toString());
+        ServiceJSonUtil.printJsonFromObject(empresa, "Empresa");
 
 
 //        HashMap<String, String> hashMap;

@@ -46,9 +46,6 @@ public class ServiceBuscaWebService {
     public static JSONObject getJsonObjectHttpUrlConnection(String strUrl, String token, String compl) {
         jsonObject = null;
         try {
-            System.out.printf("strUrl: [%s]\n", strUrl);
-            System.out.printf("token: [%s]\n", token);
-            System.out.printf("compl: [%s]\n", compl);
             urlConnection = (HttpURLConnection) new URL(strUrl).openConnection();
             urlConnection.setConnectTimeout(30000);
             urlConnection.setReadTimeout(30000);
@@ -90,7 +87,6 @@ public class ServiceBuscaWebService {
         } catch (IOException ex) {
             ex.printStackTrace();
         }
-        ServiceJSonUtil.printJsonFromString(jsonObject.toString(), "retorno");
         return jsonObject;
     }
 

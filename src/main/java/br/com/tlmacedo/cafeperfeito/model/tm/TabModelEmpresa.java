@@ -32,7 +32,7 @@ public class TabModelEmpresa {
     private ObservableList<Empresa> empresaObservableList;
     private FilteredList<Empresa> empresaFilteredList;
 
-    static TreeTableColumn<Empresa, String> colunaId;
+    static TreeTableColumn<Empresa, Long> colunaId;
     static TreeTableColumn<Empresa, String> colunaCnpj;
     static TreeTableColumn<Empresa, String> colunaIe;
     static TreeTableColumn<Empresa, String> colunaRazao;
@@ -59,11 +59,11 @@ public class TabModelEmpresa {
         try {
             Label lblId = new Label("id");
             lblId.setPrefWidth(28);
-            colunaId = new TreeTableColumn<Empresa, String>();
+            colunaId = new TreeTableColumn<Empresa, Long>();
             colunaId.setGraphic(lblId);
             colunaId.setPrefWidth(28);
             colunaId.setStyle("-fx-alignment: center-right;");
-            colunaId.setCellValueFactory(param -> param.getValue().getValue().idProperty().asString());
+            colunaId.setCellValueFactory(param -> param.getValue().getValue().idProperty().asObject());
 
             Label lblCnpj = new Label("C.N.P.J / C.P.F.");
             lblCnpj.setPrefWidth(110);
@@ -263,11 +263,11 @@ public class TabModelEmpresa {
                 empresa);
     }
 
-    public static TreeTableColumn<Empresa, String> getColunaId() {
+    public static TreeTableColumn<Empresa, Long> getColunaId() {
         return colunaId;
     }
 
-    public static void setColunaId(TreeTableColumn<Empresa, String> colunaId) {
+    public static void setColunaId(TreeTableColumn<Empresa, Long> colunaId) {
         TabModelEmpresa.colunaId = colunaId;
     }
 
@@ -491,56 +491,65 @@ public class TabModelEmpresa {
                 if (empresa.getIe().contains(strBusca)) return true;
                 if (empresa.getRazao().toLowerCase().contains(strBusca)) return true;
                 if (empresa.getFantasia().toLowerCase().contains(strBusca)) return true;
-                if (empresa.getEnderecoList().stream()
-                        .filter(end -> end.getCep().toLowerCase().contains(strBusca))
-                        .findFirst().orElse(null) != null) return true;
-                if (empresa.getEnderecoList().stream()
-                        .filter(end -> end.getLogradouro().toLowerCase().contains(strBusca))
-                        .findFirst().orElse(null) != null) return true;
-                if (empresa.getEnderecoList().stream()
-                        .filter(end -> end.getNumero().toLowerCase().contains(strBusca))
-                        .findFirst().orElse(null) != null) return true;
-                if (empresa.getEnderecoList().stream()
-                        .filter(end -> end.getComplemento().toLowerCase().contains(strBusca))
-                        .findFirst().orElse(null) != null) return true;
-                if (empresa.getEnderecoList().stream()
-                        .filter(end -> end.getBairro().toLowerCase().contains(strBusca))
-                        .findFirst().orElse(null) != null) return true;
-                if (empresa.getEnderecoList().stream()
-                        .filter(end -> end.getMunicipio().getDescricao().toLowerCase().contains(strBusca))
-                        .findFirst().orElse(null) != null) return true;
-                if (empresa.getEnderecoList().stream()
-                        .filter(end -> end.getMunicipio().getUf().getSigla().toLowerCase().contains(strBusca))
-                        .findFirst().orElse(null) != null) return true;
-                if (empresa.getEmailHomePageList().stream()
-                        .filter(mail -> mail.getDescricao().toLowerCase().contains(strBusca))
-                        .findFirst().orElse(null) != null) return true;
-                if (empresa.getTelefoneList().stream()
-                        .filter(tel -> tel.getDescricao().toLowerCase().contains(strBusca))
-                        .findFirst().orElse(null) != null) return true;
-                if (empresa.getTelefoneList().stream()
-                        .filter(tel -> tel.getTelefoneOperadora().getDescricao().toLowerCase().contains(strBusca))
-                        .findFirst().orElse(null) != null) return true;
-                if (empresa.getContatoList().stream()
-                        .filter(cont -> cont.getDescricao().toLowerCase().contains(strBusca))
-                        .findFirst().orElse(null) != null) return true;
-                if (empresa.getContatoList().stream()
-                        .filter(cont -> cont.getEmailHomePageList().stream()
-                                .filter(contMail -> contMail.getDescricao().toLowerCase().contains(strBusca))
-                                .count() > 0).findFirst().orElse(null) != null) return true;
-                if (empresa.getContatoList().stream()
-                        .filter(cont -> cont.getTelefoneList().stream()
-                                .filter(contTel -> contTel.getDescricao().toLowerCase().contains(strBusca))
-                                .count() > 0).findFirst().orElse(null) != null) return true;
-                if (empresa.getContatoList().stream()
-                        .filter(cont -> cont.getTelefoneList().stream()
-                                .filter(contTel -> contTel.getTelefoneOperadora().getDescricao().toLowerCase().contains(strBusca))
-                                .count() > 0).findFirst().orElse(null) != null) return true;
+                if (empresa.getEnderecoList() != null) {
+                    if (empresa.getEnderecoList().stream()
+                            .filter(end -> end.getCep().toLowerCase().contains(strBusca))
+                            .findFirst().orElse(null) != null) return true;
+                    if (empresa.getEnderecoList().stream()
+                            .filter(end -> end.getLogradouro().toLowerCase().contains(strBusca))
+                            .findFirst().orElse(null) != null) return true;
+                    if (empresa.getEnderecoList().stream()
+                            .filter(end -> end.getNumero().toLowerCase().contains(strBusca))
+                            .findFirst().orElse(null) != null) return true;
+                    if (empresa.getEnderecoList().stream()
+                            .filter(end -> end.getComplemento().toLowerCase().contains(strBusca))
+                            .findFirst().orElse(null) != null) return true;
+                    if (empresa.getEnderecoList().stream()
+                            .filter(end -> end.getBairro().toLowerCase().contains(strBusca))
+                            .findFirst().orElse(null) != null) return true;
+                    if (empresa.getEnderecoList().stream()
+                            .filter(end -> end.getMunicipio().getDescricao().toLowerCase().contains(strBusca))
+                            .findFirst().orElse(null) != null) return true;
+                    if (empresa.getEnderecoList().stream()
+                            .filter(end -> end.getMunicipio().getUf().getSigla().toLowerCase().contains(strBusca))
+                            .findFirst().orElse(null) != null) return true;
+                }
+                if (empresa.getEmailHomePageList() != null) {
+                    if (empresa.getEmailHomePageList().stream()
+                            .filter(mail -> mail.getDescricao().toLowerCase().contains(strBusca))
+                            .findFirst().orElse(null) != null) return true;
+                }
+                if (empresa.getTelefoneList() != null) {
+                    if (empresa.getTelefoneList().stream()
+                            .filter(tel -> tel.getDescricao().toLowerCase().contains(strBusca))
+                            .findFirst().orElse(null) != null) return true;
+                    if (empresa.getTelefoneList().stream()
+                            .filter(tel -> tel.getTelefoneOperadora().getDescricao().toLowerCase().contains(strBusca))
+                            .findFirst().orElse(null) != null) return true;
+                }
+                if (empresa.getContatoList() != null) {
+                    if (empresa.getContatoList().stream()
+                            .filter(cont -> cont.getDescricao().toLowerCase().contains(strBusca))
+                            .findFirst().orElse(null) != null) return true;
+                    if (empresa.getContatoList().stream()
+                            .filter(cont -> cont.getEmailHomePageList().stream()
+                                    .filter(contMail -> contMail.getDescricao().toLowerCase().contains(strBusca))
+                                    .count() > 0).findFirst().orElse(null) != null) return true;
+                    if (empresa.getContatoList().stream()
+                            .filter(cont -> cont.getTelefoneList().stream()
+                                    .filter(contTel -> contTel.getDescricao().toLowerCase().contains(strBusca))
+                                    .count() > 0).findFirst().orElse(null) != null) return true;
+                    if (empresa.getContatoList().stream()
+                            .filter(cont -> cont.getTelefoneList().stream()
+                                    .filter(contTel -> contTel.getTelefoneOperadora().getDescricao().toLowerCase().contains(strBusca))
+                                    .count() > 0).findFirst().orElse(null) != null) return true;
+                }
                 return false;
             });
     }
 
-    public boolean jaExiste(String busca, long idEmp) {
+    @SuppressWarnings("Duplicates")
+    public boolean jaExiste(String busca, long idEmp, boolean getAlertMsg) {
         if (busca.equals("000.000.000-00")) return false;
         String strBusca = busca.toLowerCase().trim().replaceAll("\\D", "");
         Empresa empTemp;
@@ -551,6 +560,7 @@ public class TabModelEmpresa {
             return false;
         if (idEmp > 0 && idEmp == empTemp.getId())
             return false;
+        if (!getAlertMsg) return true;
         setAlertMensagem(new ServiceAlertMensagem());
         getAlertMensagem().setCabecalho("Informação duplicada");
         getAlertMensagem().setPromptText(String.format("%s, %s: [%s] já está cadastrado no sistema para a empresa:\n%s!",
@@ -561,6 +571,31 @@ public class TabModelEmpresa {
         getAlertMensagem().setStrIco("ic_atencao_triangulo_24dp");
         getAlertMensagem().getRetornoAlert_OK();
         return true;
+    }
+
+    @SuppressWarnings("Duplicates")
+    public Empresa jaExiste(String busca, Empresa empresa, boolean getAlertMsg) {
+        if (busca.equals("000.000.000-00")) return null;
+        String strBusca = busca.toLowerCase().trim().replaceAll("\\D", "");
+        Empresa empTemp;
+        if ((empTemp = getEmpresaObservableList().stream()
+                .filter(emp -> emp.getCnpj().equals(strBusca)
+                        || emp.getIe().equals(strBusca))
+                .findFirst().orElse(null)) == null)
+            return null;
+        if (empresa.getId() > 0 && empresa.getId() == empTemp.getId())
+            return null;
+        if (!getAlertMsg) return empTemp;
+        setAlertMensagem(new ServiceAlertMensagem());
+        getAlertMensagem().setCabecalho("Informação duplicada");
+        getAlertMensagem().setPromptText(String.format("%s, %s: [%s] já está cadastrado no sistema para a empresa:\n%s!",
+                LogadoInf.getUserLog().getApelido(),
+                empTemp.getCnpj().replaceAll("\\D", "").equals(strBusca) ? "o cnpj:" : "a IE:",
+                busca,
+                String.format("%s (%s)", empTemp.getRazao(), empTemp.getFantasia())));
+        getAlertMensagem().setStrIco("ic_atencao_triangulo_24dp");
+        getAlertMensagem().getRetornoAlert_OK();
+        return empTemp;
     }
 
 }
