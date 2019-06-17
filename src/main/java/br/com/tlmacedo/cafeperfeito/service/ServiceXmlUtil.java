@@ -1,5 +1,6 @@
 package br.com.tlmacedo.cafeperfeito.service;
 
+import br.com.tlmacedo.cafeperfeito.xsd.sistema.config.TConfig;
 import br.inf.portalfiscal.xsd.nfe.enviNFe.TEnviNFe;
 import br.inf.portalfiscal.xsd.nfe.nfe.TNFe;
 import br.inf.portalfiscal.xsd.nfe.procNFe.TNfeProc;
@@ -55,7 +56,7 @@ public class ServiceXmlUtil {
     }
 
     public static <T> T xmlToObject(String xml, Class<T> classe) throws JAXBException {
-        JAXBContext context = JAXBContext.newInstance(classe);
+        JAXBContext context = JAXBContext.newInstance(TConfig.class);
         Unmarshaller unmarshaller = context.createUnmarshaller();
 
         return unmarshaller.unmarshal(new StreamSource(new StringReader(xml)), classe).getValue();

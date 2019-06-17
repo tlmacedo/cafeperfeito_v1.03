@@ -1,12 +1,12 @@
 package br.com.tlmacedo.cafeperfeito.nfe;
 
-import br.com.tlmacedo.cafeperfeito.service.ServiceSocketFactoryDinamico;
+import br.com.tlmacedo.cafeperfeito.nfe.v400.ServiceLoadCertificates;
+import br.com.tlmacedo.cafeperfeito.service.ServiceVariaveisSistema;
 import br.inf.portalfiscal.wsdl.nfe.hom.NfeStatusServico4.NfeStatusServico4Stub;
 import br.inf.portalfiscal.xsd.nfe.consStatServ.TConsStatServ;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.util.AXIOMUtil;
 import org.apache.axis2.AxisFault;
-import org.apache.commons.httpclient.protocol.Protocol;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
@@ -14,62 +14,20 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.stream.XMLStreamException;
 import java.io.StringWriter;
-import java.net.URL;
 import java.rmi.RemoteException;
-import java.security.KeyStore;
-import java.security.PrivateKey;
-import java.security.Provider;
-import java.security.Security;
-import java.security.cert.X509Certificate;
-import java.util.Enumeration;
 
 public class NFeStatusServicoFactoryDinamicoA3 {
-    private static final int SSL_PORT = 443;
 
     public NFeStatusServicoFactoryDinamicoA3() {
+        new ServiceVariaveisSistema().getVariaveisSistemaBasica();
+        //System.setProperty("senhaDoCertificado", "4879");
         try {
-            String codigoDoEstado = "13";
-            URL url = new URL("https://homnfe.sefaz.am.gov.br/services2/services/NfeStatusServico4.asmx");
-
             /**
              * Informações do Certificado Digital A3.
              */
-            String configName = "/Volumes/150GB-Development/cafeperfeito/cafeperfeito/src/main/resources/certificado/tokenSafeNet5100.cfg";
-            String senhaDoCertificado = "4879";
-            String arquivoCacertsGeradoTodosOsEstados = "/Volumes/150GB-Development/cafeperfeito/cafeperfeito/src/main/resources/certificado/NFeCacerts";
-
-            Provider p = Security.getProvider("SunPKCS11");
-            p = p.configure("/Volumes/150GB-Development/cafeperfeito/cafeperfeito/src/main/resources/certificado/tokenSafeNet5100.cfg");
-//            p.configure(configName);
-            Security.addProvider(p);
-
-
-            char[] pin = senhaDoCertificado.toCharArray();
-            KeyStore ks = KeyStore.getInstance("pkcs11", p);
-            ks.load(null, pin);
-
-            /**
-             * Resolve o problema do 403.7 Forbidden para Certificados A3 e A1
-             * e elimina o uso das cofigurações:
-             * - System.setProperty("javax.net.ssl.keyStore", "NONE");
-             * - System.setProperty("javax.net.ssl.keyStoreType", "PKCS11");
-             * - System.setProperty("javax.net.ssl.keyStoreProvider", "SunPKCS11-SmartCard");
-             * - System.setProperty("javax.net.ssl.trustStoreType", "JKS");
-             * - System.setProperty("javax.net.ssl.trustStore", arquivoCacertsGeradoTodosOsEstados);
-             */
-            String alias = "";
-            Enumeration<String> aliasesEnum = ks.aliases();
-            while (aliasesEnum.hasMoreElements()) {
-                alias = (String) aliasesEnum.nextElement();
-                if (ks.isKeyEntry(alias)) break;
-            }
-            X509Certificate certificate = (X509Certificate) ks.getCertificate(alias);
-            PrivateKey privateKey = (PrivateKey) ks.getKey(alias, senhaDoCertificado.toCharArray());
-            ServiceSocketFactoryDinamico socketFactoryDinamico = new ServiceSocketFactoryDinamico(certificate, privateKey);
-            socketFactoryDinamico.setFileCacerts(arquivoCacertsGeradoTodosOsEstados);
-
-            Protocol protocol = new Protocol("https", socketFactoryDinamico, SSL_PORT);
-            Protocol.registerProtocol("https", protocol);
+            ServiceLoadCertificates certificates = new ServiceLoadCertificates();
+            certificates.loadToken();
+            certificates.abreSocketDinamico();
 
 
             /**

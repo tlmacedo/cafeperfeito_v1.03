@@ -1,15 +1,16 @@
 package br.com.tlmacedo.cafeperfeito.nfe.v400;
 
 import br.com.tlmacedo.cafeperfeito.service.ServiceAlertMensagem;
+import br.com.tlmacedo.cafeperfeito.service.ServiceSocketFactoryDinamico;
 import javafx.util.Pair;
+import org.apache.commons.httpclient.protocol.Protocol;
 
+import javax.security.auth.callback.PasswordCallback;
 import javax.xml.crypto.dsig.XMLSignatureFactory;
 import javax.xml.crypto.dsig.keyinfo.KeyInfo;
 import javax.xml.crypto.dsig.keyinfo.KeyInfoFactory;
 import javax.xml.crypto.dsig.keyinfo.X509Data;
-import java.io.IOException;
 import java.security.*;
-import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,9 +26,9 @@ import java.util.List;
 
 public class ServiceLoadCertificates {
 
-    private static KeyStore keyStoreA3;
     private ServiceAlertMensagem alertMensagem;
     private PrivateKey privateKey;
+    private X509Certificate x509Certificate;
     private KeyInfo keyInfo;
     private String senhaDoCertificado = null;
 
@@ -35,9 +36,51 @@ public class ServiceLoadCertificates {
         setSenhaDoCertificado(System.getProperty("senhaDoCertificado"));
     }
 
+    public void loadToken() {
+        try {
+            String configName = "/Volumes/150GB-Development/cafeperfeito/cafeperfeito_v1.03/src/main/resources/certificado/tokenSafeNet5100.cfg";
+
+            Provider p = Security.getProvider("SunPKCS11");
+            p = p.configure(configName);
+            Security.addProvider(p);
+
+            char[] pin = getSenhaDoCertificado().toCharArray();
+
+            KeyStore.CallbackHandlerProtection chp =
+                    new KeyStore.CallbackHandlerProtection(callbacks -> {
+                        for (int i = 0; i < callbacks.length; i++) {
+                            PasswordCallback pc = (PasswordCallback) callbacks[i];
+                            pc.setPassword(getSenhaDoCertificado().toCharArray());
+                        }
+                    });
+            KeyStore.Builder builder =
+                    KeyStore.Builder.newInstance("PKCS11", p, chp);
+
+            KeyStore ks = builder.getKeyStore();
+
+            KeyStore.PrivateKeyEntry pkEntry = null;
+            String alias = null;
+            Enumeration<String> aliasesEnum = ks.aliases();
+            while (aliasesEnum.hasMoreElements()) {
+                alias = (String) aliasesEnum.nextElement();
+                if (ks.isKeyEntry(alias)) {
+                    pkEntry = (KeyStore.PrivateKeyEntry) ks.getEntry(alias,
+                            new KeyStore.PasswordProtection(getSenhaDoCertificado().toCharArray()));
+                    setPrivateKey(pkEntry.getPrivateKey());
+                    break;
+                }
+            }
+
+            setX509Certificate((X509Certificate) pkEntry.getCertificate());
+
+        } catch (NoSuchAlgorithmException | KeyStoreException | UnrecoverableEntryException ex) {
+            ex.printStackTrace();
+        }
+    }
+
     public Pair<KeyInfo, PrivateKey> getCertInfos(XMLSignatureFactory signatureFactory) {
-        if (keyStoreA3 == null) {
-//        setSenhaDoCertificado("4879");
+        if (getX509Certificate() == null)
+            loadToken();
 //        if (getSenhaDoCertificado() == null) {
 ////            Platform.runLater(() -> {
 //                setAlertMensagem(new ServiceAlertMensagem());
@@ -50,48 +93,23 @@ public class ServiceLoadCertificates {
 //                return null;
 //        }
 
-            Provider p = Security.getProvider("SunPKCS11");
-            p = p.configure("/Volumes/150GB-Development/cafeperfeito/cafeperfeito/src/main/resources/certificado/tokenSafeNet5100.cfg");
-            //p = p.configure(TCONFIG.getNfe().getCertificadoCfg());
-            Security.addProvider(p);
+        KeyInfoFactory keyInfoFactory = signatureFactory.getKeyInfoFactory();
+        List<X509Certificate> x509Content = new ArrayList<X509Certificate>();
 
-            System.out.printf("senha: [%s]\n", getSenhaDoCertificado());
-            System.out.printf("senha.toCharArray(): [%s]\n", getSenhaDoCertificado().toCharArray());
+        x509Content.add(getX509Certificate());
+        X509Data x509Data = keyInfoFactory.newX509Data(x509Content);
+        setKeyInfo(keyInfoFactory.newKeyInfo(Collections.singletonList(x509Data)));
 
-            char[] pin = getSenhaDoCertificado().toCharArray();
-            try {
-                keyStoreA3 = KeyStore.getInstance("pkcs11", p);
-                keyStoreA3.load(null, pin);
-
-                KeyStore.PrivateKeyEntry pkEntry = null;
-                Enumeration<String> aliasesEnum = keyStoreA3.aliases();
-                while (aliasesEnum.hasMoreElements()) {
-                    String alias = (String) aliasesEnum.nextElement();
-                    if (keyStoreA3.isKeyEntry(alias)) {
-                        pkEntry = (KeyStore.PrivateKeyEntry) keyStoreA3.getEntry(alias,
-                                new KeyStore.PasswordProtection(getSenhaDoCertificado().toCharArray()));
-                        setPrivateKey(pkEntry.getPrivateKey());
-                        break;
-                    }
-                }
-                X509Certificate cert = (X509Certificate) pkEntry.getCertificate();
-
-                KeyInfoFactory keyInfoFactory = signatureFactory.getKeyInfoFactory();
-                List<X509Certificate> x509Content = new ArrayList<X509Certificate>();
-
-                x509Content.add(cert);
-                X509Data x509Data = keyInfoFactory.newX509Data(x509Content);
-                setKeyInfo(keyInfoFactory.newKeyInfo(Collections.singletonList(x509Data)));
-
-
-            } catch (IOException | KeyStoreException | NoSuchAlgorithmException | CertificateException | UnrecoverableEntryException e) {
-                e.printStackTrace();
-            }
-        }
-        return new Pair<KeyInfo, PrivateKey>(keyInfo, privateKey);
-        //return keyStoreA3;
+        return new Pair<KeyInfo, PrivateKey>(getKeyInfo(), getPrivateKey());
     }
 
+    public void abreSocketDinamico() {
+        ServiceSocketFactoryDinamico socketFactoryDinamico = new ServiceSocketFactoryDinamico(getX509Certificate(), getPrivateKey());
+        socketFactoryDinamico.setFileCacerts("/Volumes/150GB-Development/cafeperfeito/cafeperfeito_v1.03/src/main/resources/certificado/NFeCacerts");
+
+        Protocol protocol = new Protocol("https", socketFactoryDinamico, 443);
+        Protocol.registerProtocol("https", protocol);
+    }
 
     public ServiceAlertMensagem getAlertMensagem() {
         return alertMensagem;
@@ -109,7 +127,7 @@ public class ServiceLoadCertificates {
         this.privateKey = privateKey;
     }
 
-    public KeyInfo getCertInfos() {
+    public KeyInfo getKeyInfo() {
         return keyInfo;
     }
 
@@ -123,5 +141,13 @@ public class ServiceLoadCertificates {
 
     public void setSenhaDoCertificado(String senhaDoCertificado) {
         this.senhaDoCertificado = senhaDoCertificado;
+    }
+
+    public X509Certificate getX509Certificate() {
+        return x509Certificate;
+    }
+
+    public void setX509Certificate(X509Certificate x509Certificate) {
+        this.x509Certificate = x509Certificate;
     }
 }

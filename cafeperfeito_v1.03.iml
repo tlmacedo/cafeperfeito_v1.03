@@ -32,7 +32,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="sunpkcs11" level="project" />
-    <orderEntry type="library" name="wsdlNfe_v400" level="project" />
     <orderEntry type="library" name="xsdConfigSistema" level="project" />
     <orderEntry type="library" name="xsdCte_pl300nt2018_002" level="project" />
     <orderEntry type="library" name="xsdNfe_pl009v120" level="project" />
@@ -127,5 +126,6 @@
     <orderEntry type="library" name="Maven: xml-apis:xml-apis:1.4.01" level="project" />
     <orderEntry type="library" name="Maven: org.hibernate:hibernate-core:5.4.2.Final" level="project" />
     <orderEntry type="library" name="Maven: javax.persistence:javax.persistence-api:2.2" level="project" />
+    <orderEntry type="library" name="wsdlNfe_v400" level="project" />
   </component>
 </module>

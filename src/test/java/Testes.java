@@ -1,27 +1,13 @@
 import br.com.tlmacedo.cafeperfeito.model.dao.TelefoneOperadoraDAO;
 import br.com.tlmacedo.cafeperfeito.model.vo.TelefoneOperadora;
-import br.com.tlmacedo.cafeperfeito.nfe.v400.ServiceAssinarXml;
 import br.com.tlmacedo.cafeperfeito.service.ServiceBuscaWebService;
-import br.com.tlmacedo.cafeperfeito.service.ServiceVariaveisSistema;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 public class Testes {
-    private static Document documentFactory(String xml) throws SAXException,
-            IOException, ParserConfigurationException {
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        factory.setNamespaceAware(true);
-        Document document = factory.newDocumentBuilder().parse(
-                new ByteArrayInputStream(xml.getBytes()));
-        return document;
-    }
 
     private static String lerXML(String fileXML) throws IOException {
         String linha = "";
@@ -38,67 +24,80 @@ public class Testes {
     }
 
     public static void main(String... args) throws Exception {
-        new ServiceVariaveisSistema().getVariaveisSistemaBasica();
-
-        String fileEnviNFe = "/Volumes/150GB-Development/cafeperfeito/cafeperfeito/src/main/resources/xml/nfe/out/NFe13190608009246000136550010000008671201906058.xml";
-        String xmlEnviNFe = lerXML(fileEnviNFe);
-        new ServiceAssinarXml(xmlEnviNFe);
-        Document doc = documentFactory(xmlEnviNFe);
-
-//            for (int i = 0; i < document.getDocumentElement().getElementsByTagName("NFe").getLength(); i++) {
+//        new ServiceVariaveisSistema().getVariaveisSistemaBasica();
 //
-////            assinarNFe(signatureFactory, transformList, privateKey, keyInfo, document, 1);
+//        URL url = new URL("https://homnfe.sefaz.am.gov.br/services2/services/RecepcaoEvento4.asmx");
+//
+//        String fileEnviNFe = "/Volumes/150GB-Development/cafeperfeito/cafeperfeito_v1.03/src/main/resources/xml/nfe/out/NFe13190608009246000136550010000008671201906058.xml";
+//        String xmlEnviNFe = lerXML(fileEnviNFe);
+//        String xmlNFeAssinado = new ServiceAssinarXml(xmlEnviNFe).outputXML();
+//
+//        OMElement ome = AXIOMUtil.stringToOM(xmlNFeAssinado);
+//        Iterator<?> children = ome.getChildrenWithLocalName("NFe");
+//        while (children.hasNext()) {
+//            OMElement omElement = (OMElement) children.next();
+//            if ((omElement != null) && ("NFe".equals(omElement.getLocalName()))) {
+//                omElement.addAttribute("xmlns", "http://www.portalfiscal.inf.br/nfe", null);
 //            }
+//        }
+//
+//
+//        /**
+//         * Xml de Consulta.
+//         */
+//
+////        TConsStatServ consStatServ = new TConsStatServ();
+////        consStatServ.setTpAmb("2");
+////        consStatServ.setCUF("13");
+////        consStatServ.setVersao("4.00");
+////        consStatServ.setXServ("STATUS");
+////        String xml = null;
+////        try {
+////            xml = objectToXml(consStatServ);
+////        } catch (JAXBException e) {
+////            e.printStackTrace();
+////        }
+////        //String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><consStatServ versao=\"4.00\" xmlns=\"http://www.portalfiscal.inf.br/nfe\"><tpAmb>2</tpAmb><cUF>35</cUF><xServ>STATUS</xServ></consStatServ>";//objectToXml(consStatServ);
+////
+////        OMElement ome = null;
+////        try {
+////            ome = AXIOMUtil.stringToOM(xml);
+////        } catch (XMLStreamException e) {
+////            e.printStackTrace();
+////        }
+//        RecepcaoEvento4Stub.NfeDadosMsg dadosMsg = new RecepcaoEvento4Stub.NfeDadosMsg();
+//        dadosMsg.setExtraElement(ome);
+//
+//        RecepcaoEvento4Stub stub = null;
+//        try {
+//            stub = new RecepcaoEvento4Stub(url.toString());
+//        } catch (AxisFault axisFault) {
+//            axisFault.printStackTrace();
+//        }
+//        RecepcaoEvento4Stub.NfeResultMsg result = null;
+//        try {
+//            result = stub.nfeRecepcaoEvento(dadosMsg);
+//        } catch (RemoteException e) {
+//            e.printStackTrace();
+//        }
+//
+//        System.out.println(result.getExtraElement().toString());
 
-        try {
-//            File inputFile = new File("/Volumes/150GB-Development/cafeperfeito/cafeperfeito/src/main/resources/xml/_nfe1.xml");
-//            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-//            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-//            Document doc = dBuilder.parse(inputFile);
-            doc.getDocumentElement().normalize();
-            System.out.println("Root element :" + doc.getDocumentElement().getNodeName());
-            NodeList nList = doc.getElementsByTagName("NFe");
-            System.out.println("----------------------------");
-            System.out.printf("qtd: [%d]\n", doc.getElementsByTagName("NFe").getLength());
 
-            for (int temp = 0; temp < nList.getLength(); temp++) {
-                Node nNode = nList.item(temp);
-                System.out.println("\nCurrent Element :" + nNode.getNodeName());
-
-                for (int i = 0; i < nNode.getChildNodes().getLength(); i++) {
-                    System.out.printf("child(%d): [%s]\n", i, nNode.getChildNodes().item(i).getNodeName());
-                }
-
-                if (nNode.getNodeType() == Node.ELEMENT_NODE) {
-                    Element eElement = (Element) nNode;
-                    System.out.printf("eElement: [%s]\n", eElement.getTagName());
-//                    System.out.println("Student roll no : "
-//                            + eElement.getAttribute("rollno"));
-//                    System.out.println("First Name : "
-//                            + eElement
-//                            .getElementsByTagName("firstname")
-//                            .item(0)
-//                            .getTextContent());
-//                    System.out.println("Last Name : "
-//                            + eElement
-//                            .getElementsByTagName("lastname")
-//                            .item(0)
-//                            .getTextContent());
-//                    System.out.println("Nick Name : "
-//                            + eElement
-//                            .getElementsByTagName("nickname")
-//                            .item(0)
-//                            .getTextContent());
-//                    System.out.println("Marks : "
-//                            + eElement
-//                            .getElementsByTagName("marks")
-//                            .item(0)
-//                            .getTextContent());
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        /**
+         *
+         *
+         *
+         *
+         *
+         *
+         *
+         *
+         *
+         *
+         *
+         *
+         */
 
 
 //        String fileEnviNFe = "/Volumes/150GB-Development/cafeperfeito/cafeperfeito/src/main/resources/xml/_nfe1.xml";
