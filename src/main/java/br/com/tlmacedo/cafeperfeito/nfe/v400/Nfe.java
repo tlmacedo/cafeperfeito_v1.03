@@ -496,12 +496,16 @@ public class Nfe {
         /**Razão Social ou nome do destinatário
          * Tag obrigatória para a NF-e (modelo 55) e opcional para a NFC-e.
          */
+
         String xNome = String.format("%s (%s)",
                 destinatario.getRazao(),
                 destinatario.getFantasia());
-        dest.setXNome(xNome.length() > 60
-                ? xNome.substring(0, 60)
-                : xNome);
+        if (TCONFIG.getNfe().getTpAmb() == 1)
+            dest.setXNome(xNome.length() > 60
+                    ? xNome.substring(0, 60)
+                    : xNome);
+        else
+            dest.setXNome("NF-E EMITIDA EM AMBIENTE DE HOMOLOGACAO - SEM VALOR FISCAL");
 
         /**
          * Grupo obrigatório para a NF-e (modelo 55).
