@@ -1,13 +1,84 @@
+import br.com.tlmacedo.cafeperfeito.model.dao.SaidaProdutoDAO;
 import br.com.tlmacedo.cafeperfeito.model.dao.TelefoneOperadoraDAO;
+import br.com.tlmacedo.cafeperfeito.model.vo.SaidaProduto;
+import br.com.tlmacedo.cafeperfeito.model.vo.SaidaProdutoNfe;
 import br.com.tlmacedo.cafeperfeito.model.vo.TelefoneOperadora;
+import br.com.tlmacedo.cafeperfeito.model.vo.enums.NfeCteModelo;
+import br.com.tlmacedo.cafeperfeito.model.vo.enums.NfeDestinoOperacao;
+import br.com.tlmacedo.cafeperfeito.model.vo.enums.NfeModalidadeFrete;
+import br.com.tlmacedo.cafeperfeito.model.vo.enums.NfePresencaComprador;
+import br.com.tlmacedo.cafeperfeito.nfe.v400.Nfe;
+import br.com.tlmacedo.cafeperfeito.nfe.v400.ServiceAssinarXml;
+import br.com.tlmacedo.cafeperfeito.nfe.v400.ServiceGerarChaveNfe;
+import br.com.tlmacedo.cafeperfeito.nfe.v400.ServiceLoadCertificates;
 import br.com.tlmacedo.cafeperfeito.service.ServiceBuscaWebService;
+import br.com.tlmacedo.cafeperfeito.service.ServiceFileSave;
+import br.com.tlmacedo.cafeperfeito.service.ServiceVariaveisSistema;
+import br.com.tlmacedo.cafeperfeito.service.ServiceXmlUtil;
+import br.inf.portalfiscal.xsd.nfe.enviNFe.TEnviNFe;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.time.LocalDateTime;
+import java.util.Scanner;
 
 public class Testes {
+
+    private TEnviNFe gerarNovaNFe() {
+        System.out.printf("\nqual saida de produto vc que gerar NF ?");
+        Scanner scan = new Scanner(System.in);
+
+        SaidaProdutoNfe nfe = new SaidaProdutoNfe();
+        SaidaProduto saidaProduto = new SaidaProdutoDAO().getById(SaidaProduto.class, Long.valueOf(scan.nextLine().replaceAll("\\D", "")));
+        System.out.printf("SaidaProduto: [%s]\n", saidaProduto);
+        nfe.setSaidaProduto(saidaProduto);
+        try {
+            nfe.setNaturezaOperacao("VENDA DENTRO DO ESTADO");
+            System.out.printf("\nqual o numero da NFe ?");
+            nfe.setNumero(Integer.parseInt(scan.nextLine().replaceAll("\\D", "")));
+            nfe.setSerie(001);
+            nfe.setModelo(NfeCteModelo.MOD55);
+            LocalDateTime dtHoraEmissao, dtHoraSaida;
+            dtHoraEmissao = LocalDateTime.now();
+            dtHoraSaida = LocalDateTime.now().plusDays(1);
+            nfe.setDataHoraEmissao(dtHoraEmissao);
+            nfe.setDataHoraSaida(dtHoraSaida);
+            nfe.setDestOperacao(NfeDestinoOperacao.INTERNA);
+            if (saidaProduto.getCliente().getIe().equals(""))
+                nfe.setConsumidorFinal(true);
+            else
+                nfe.setConsumidorFinal(false);
+            nfe.setPresencaComprador(NfePresencaComprador.NAOPRESENCIAL_TELEATENDIMENTO);
+            nfe.setModalidadeFrete(NfeModalidadeFrete.FOB);
+//            if (cboNfeTransportador.getSelectionModel().getSelectedIndex() >= 0)
+//                nfe.setTransportador(cboNfeTransportador.getSelectionModel().getSelectedItem());
+//            else
+//                nfe.setTransportador(null);
+            nfe.setCobrancaNumero(String.valueOf(nfe.getNumero()));
+            nfe.setInformacaoAdicional("");
+
+            nfe.setChave(ServiceGerarChaveNfe.Gerar(nfe));
+
+            saidaProduto.setNfe(nfe);
+
+            //TNFe tnFe = new Nfe(saidaProduto).getTnFe();
+            TEnviNFe tEnviNFe = new Nfe(saidaProduto).gettEnviNFe();
+
+            ServiceFileSave.saveNfeXmlOut(tEnviNFe);
+
+            return tEnviNFe;
+
+//             getSaidaProduto().getNfe().setConsumidorFinal(Boolean.parseBoolean(tnFe.getInfNFe().getIde().getIndFinal()));
+//            getSaidaProduto().getNfe().setStatus(NfeStatusSEFAZ.DIGITACAO);
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
+    }
+
 
     private static String lerXML(String fileXML) throws IOException {
         String linha = "";
@@ -24,14 +95,50 @@ public class Testes {
     }
 
     public static void main(String... args) throws Exception {
-//        new ServiceVariaveisSistema().getVariaveisSistemaBasica();
-//
-//        URL url = new URL("https://homnfe.sefaz.am.gov.br/services2/services/RecepcaoEvento4.asmx");
+        Testes testes = new Testes();
+        new ServiceVariaveisSistema().getVariaveisSistemaBasica();
+
+        TEnviNFe tEnviNFe = testes.gerarNovaNFe();
+
+        String strEnviNFe = ServiceXmlUtil.objectToXml(tEnviNFe);
+
+        System.out.printf("strEnviNFe: \n\n%s\n\n\n", strEnviNFe);
+
+        ServiceLoadCertificates loadCertificates = new ServiceLoadCertificates();
+        loadCertificates.loadToken();
+
+        ServiceAssinarXml serviceAssinarXml = new ServiceAssinarXml(strEnviNFe, loadCertificates);
+        String strEnviNFeAssinado = serviceAssinarXml.outputXML();
+
+        System.out.printf("strEnviNFeAssinado: \n\n%s\n\n\n", strEnviNFeAssinado);
+
+
+//        ServiceLoadCertificates loadCertificates = new ServiceLoadCertificates();
+//        loadCertificates.loadToken();
 //
 //        String fileEnviNFe = "/Volumes/150GB-Development/cafeperfeito/cafeperfeito_v1.03/src/main/resources/xml/nfe/out/NFe13190608009246000136550010000008671201906058.xml";
 //        String xmlEnviNFe = lerXML(fileEnviNFe);
-//        String xmlNFeAssinado = new ServiceAssinarXml(xmlEnviNFe).outputXML();
+//        ServiceAssinarXml serviceAssinarXml = new ServiceAssinarXml(xmlEnviNFe, loadCertificates);
+//        String xmlNFeAssinado = serviceAssinarXml.outputXML();
 //
+//        String diretorio = fileEnviNFe.substring(0, fileEnviNFe.length() - 4) + "_assinado.xml";
+//        FileWriter arquivo = new FileWriter(new File(diretorio));
+//        arquivo.write(xmlNFeAssinado);
+//        arquivo.close();
+//
+//        System.out.printf("\n\n%s\n\n\n\n", xmlNFeAssinado);
+//
+//        String fileNFeAssinado = "/Volumes/150GB-Development/cafeperfeito/cafeperfeito_v1.03/src/main/resources/xml/nfe/out/NFe13190608009246000136550010000008671201906058_assinado.xml";
+//        xmlNFeAssinado = lerXML(fileNFeAssinado);
+//
+//        EnviNFe enviNFe = new EnviNFe(xmlNFeAssinado);
+//        String xmlNFeEnvi = ServiceXmlUtil.objectToXml(enviNFe);
+//        diretorio = fileEnviNFe.substring(0, fileEnviNFe.length() - 4) + "_enviNfe.xml";
+//        arquivo = new FileWriter(new File(diretorio));
+//        arquivo.write(xmlEnviNFe);
+//        arquivo.close();
+
+
 //        OMElement ome = AXIOMUtil.stringToOM(xmlNFeAssinado);
 //        Iterator<?> children = ome.getChildrenWithLocalName("NFe");
 //        while (children.hasNext()) {
@@ -40,49 +147,51 @@ public class Testes {
 //                omElement.addAttribute("xmlns", "http://www.portalfiscal.inf.br/nfe", null);
 //            }
 //        }
+
+
+        /**
+         * Xml de Consulta.
+         */
+
+//        TConsStatServ consStatServ = new TConsStatServ();
+//        consStatServ.setTpAmb("2");
+//        consStatServ.setCUF("13");
+//        consStatServ.setVersao("4.00");
+//        consStatServ.setXServ("STATUS");
+//        String xml = null;
+//        try {
+//            xml = objectToXml(consStatServ);
+//        } catch (JAXBException e) {
+//            e.printStackTrace();
+//        }
+//        //String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><consStatServ versao=\"4.00\" xmlns=\"http://www.portalfiscal.inf.br/nfe\"><tpAmb>2</tpAmb><cUF>35</cUF><xServ>STATUS</xServ></consStatServ>";//objectToXml(consStatServ);
+
+//        OMElement ome = null;
+//        try {
+//            ome = AXIOMUtil.stringToOM(xmlNFeAssinado);
+//        } catch (XMLStreamException e) {
+//            e.printStackTrace();
+//        }
 //
 //
-//        /**
-//         * Xml de Consulta.
-//         */
-//
-////        TConsStatServ consStatServ = new TConsStatServ();
-////        consStatServ.setTpAmb("2");
-////        consStatServ.setCUF("13");
-////        consStatServ.setVersao("4.00");
-////        consStatServ.setXServ("STATUS");
-////        String xml = null;
-////        try {
-////            xml = objectToXml(consStatServ);
-////        } catch (JAXBException e) {
-////            e.printStackTrace();
-////        }
-////        //String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><consStatServ versao=\"4.00\" xmlns=\"http://www.portalfiscal.inf.br/nfe\"><tpAmb>2</tpAmb><cUF>35</cUF><xServ>STATUS</xServ></consStatServ>";//objectToXml(consStatServ);
-////
-////        OMElement ome = null;
-////        try {
-////            ome = AXIOMUtil.stringToOM(xml);
-////        } catch (XMLStreamException e) {
-////            e.printStackTrace();
-////        }
-//        RecepcaoEvento4Stub.NfeDadosMsg dadosMsg = new RecepcaoEvento4Stub.NfeDadosMsg();
+//        NfeAutorizacao4Stub.NfeDadosMsg dadosMsg = new NfeAutorizacao4Stub.NfeDadosMsg();
 //        dadosMsg.setExtraElement(ome);
 //
-//        RecepcaoEvento4Stub stub = null;
+//        NfeAutorizacao4Stub stub = null;
 //        try {
-//            stub = new RecepcaoEvento4Stub(url.toString());
+//            stub = new NfeAutorizacao4Stub();
 //        } catch (AxisFault axisFault) {
 //            axisFault.printStackTrace();
 //        }
-//        RecepcaoEvento4Stub.NfeResultMsg result = null;
+//        NfeAutorizacao4Stub.NfeResultMsg result = null;
 //        try {
-//            result = stub.nfeRecepcaoEvento(dadosMsg);
+//            result = stub.nfeAutorizacaoLote(dadosMsg);
 //        } catch (RemoteException e) {
 //            e.printStackTrace();
 //        }
 //
 //        System.out.println(result.getExtraElement().toString());
-
+//
 
         /**
          *

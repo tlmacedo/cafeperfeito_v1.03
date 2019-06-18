@@ -5,21 +5,22 @@ import br.com.tlmacedo.cafeperfeito.model.vo.*;
 import br.com.tlmacedo.cafeperfeito.model.vo.enums.ClassificacaoJuridica;
 import br.com.tlmacedo.cafeperfeito.model.vo.enums.EnderecoTipo;
 import br.com.tlmacedo.cafeperfeito.service.ServiceMascara;
-import br.inf.portalfiscal.xsd.nfe.nfe.*;
-import br.inf.portalfiscal.xsd.nfe.nfe.TNFe.InfNFe;
-import br.inf.portalfiscal.xsd.nfe.nfe.TNFe.InfNFe.*;
-import br.inf.portalfiscal.xsd.nfe.nfe.TNFe.InfNFe.Cobr.Dup;
-import br.inf.portalfiscal.xsd.nfe.nfe.TNFe.InfNFe.Cobr.Fat;
-import br.inf.portalfiscal.xsd.nfe.nfe.TNFe.InfNFe.Det.Imposto;
-import br.inf.portalfiscal.xsd.nfe.nfe.TNFe.InfNFe.Det.Imposto.COFINS;
-import br.inf.portalfiscal.xsd.nfe.nfe.TNFe.InfNFe.Det.Imposto.COFINS.COFINSNT;
-import br.inf.portalfiscal.xsd.nfe.nfe.TNFe.InfNFe.Det.Imposto.ICMS;
-import br.inf.portalfiscal.xsd.nfe.nfe.TNFe.InfNFe.Det.Imposto.ICMS.*;
-import br.inf.portalfiscal.xsd.nfe.nfe.TNFe.InfNFe.Det.Imposto.PIS;
-import br.inf.portalfiscal.xsd.nfe.nfe.TNFe.InfNFe.Det.Imposto.PIS.PISNT;
-import br.inf.portalfiscal.xsd.nfe.nfe.TNFe.InfNFe.Det.Prod;
-import br.inf.portalfiscal.xsd.nfe.nfe.TNFe.InfNFe.Total.ICMSTot;
-import br.inf.portalfiscal.xsd.nfe.nfe.TNFe.InfNFe.Transp.Transporta;
+import br.inf.portalfiscal.xsd.nfe.enviNFe.*;
+import br.inf.portalfiscal.xsd.nfe.enviNFe.TNFe;
+import br.inf.portalfiscal.xsd.nfe.enviNFe.TNFe.InfNFe;
+import br.inf.portalfiscal.xsd.nfe.enviNFe.TNFe.InfNFe.*;
+import br.inf.portalfiscal.xsd.nfe.enviNFe.TNFe.InfNFe.Cobr.Dup;
+import br.inf.portalfiscal.xsd.nfe.enviNFe.TNFe.InfNFe.Cobr.Fat;
+import br.inf.portalfiscal.xsd.nfe.enviNFe.TNFe.InfNFe.Det.Imposto;
+import br.inf.portalfiscal.xsd.nfe.enviNFe.TNFe.InfNFe.Det.Imposto.COFINS;
+import br.inf.portalfiscal.xsd.nfe.enviNFe.TNFe.InfNFe.Det.Imposto.COFINS.COFINSNT;
+import br.inf.portalfiscal.xsd.nfe.enviNFe.TNFe.InfNFe.Det.Imposto.ICMS;
+import br.inf.portalfiscal.xsd.nfe.enviNFe.TNFe.InfNFe.Det.Imposto.ICMS.*;
+import br.inf.portalfiscal.xsd.nfe.enviNFe.TNFe.InfNFe.Det.Imposto.PIS;
+import br.inf.portalfiscal.xsd.nfe.enviNFe.TNFe.InfNFe.Det.Imposto.PIS.PISNT;
+import br.inf.portalfiscal.xsd.nfe.enviNFe.TNFe.InfNFe.Det.Prod;
+import br.inf.portalfiscal.xsd.nfe.enviNFe.TNFe.InfNFe.Total.ICMSTot;
+import br.inf.portalfiscal.xsd.nfe.enviNFe.TNFe.InfNFe.Transp.Transporta;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
@@ -44,6 +45,7 @@ import static br.com.tlmacedo.cafeperfeito.service.ServiceVariaveisSistema.TCONF
 public class Nfe {
 
     TNFe tnFe;
+    TEnviNFe tEnviNFe;
 
     SaidaProduto saidaProduto;
 
@@ -55,6 +57,8 @@ public class Nfe {
         getTnFe().setInfNFe(new InfNFe());
         getNewInfNFe();
 
+
+        settEnviNFe(getTnFe());
 
 //        try {
 //            info("XML NF-e: " + ServiceXmlUtil.printXmlFromString(strValueOf(getTnFe()), true));
@@ -264,7 +268,7 @@ public class Nfe {
          */
         emit.setXFant(loja.getFantasia());
 
-        //*****************emit.setEnderEmit(getNewEnderEmi(loja.getEnderecoNFe(), loja.getTelefone().getDescricao()));
+        emit.setEnderEmit(getNewEnderEmi(loja.getEnderecoNFe(), loja.getTelefone().getDescricao()));
 
         /**Inscrição Estadual do Emitente
          * Informar somente os algarismos, sem os caracteres de formatação (ponto, barra, hífen, etc.).
@@ -462,8 +466,7 @@ public class Nfe {
         infNFe.setPag(new Pag());
         getNewPag();
 
-        infNFe.setInfAdic(new InfAdic());
-        getNewInfAdic();
+        infNFe.setInfAdic(getNewInfAdic());
 
         //return infNFe;
     }
@@ -510,7 +513,7 @@ public class Nfe {
         /**
          * Grupo obrigatório para a NF-e (modelo 55).
          */
-        //*****************dest.setEnderDest(getNewEndereco(destinatario.getEnderecoNFe(), destinatario.getTelefone().getDescricao()));
+        dest.setEnderDest(getNewEndereco(destinatario.getEnderecoNFe(), destinatario.getTelefone().getDescricao()));
 
 //        if (destinatario.getEnderecoNFeEntrega() != null)
 //            getTnFe().getInfNFe().setEntrega(getNewEntrega(destinatario.getEnderecoNFeEntrega()));
@@ -551,7 +554,7 @@ public class Nfe {
         /**email
          * Campo pode ser utilizado para informar o e-mail de recepção da NF-e indicada pelo destinatário (v2.0)
          */
-        //*****************dest.setEmail(destinatario.getEmailPrincipal());
+        dest.setEmail(destinatario.getEmailPrincipal());
 
         //return dest;
     }
@@ -629,11 +632,11 @@ public class Nfe {
          * Preencher com o Código DDD + número do telefone.
          * Nas operações com exterior é permitido informar o código do país + código da localidade + número do telefone (v2.0)
          */
-        //*****************tLocal.setFone(ServiceMascara.getTelefone(emp.getTelefone().getDescricao()));
+        tLocal.setFone(ServiceMascara.getTelefone(emp.getTelefone().getDescricao()));
 
         /**Endereço de e-mail do Recebedor
          */
-        //*****************tLocal.setEmail(emp.getEmailPrincipal());
+        tLocal.setEmail(emp.getEmailPrincipal());
 
         return tLocal;
     }
@@ -1681,7 +1684,7 @@ public class Nfe {
 
         /**Endereço Completo
          */
-        //*****************transporta.setXEnder(getSaidaProduto().getNfe().getTransportador().getEnderecoPrincipal());
+        transporta.setXEnder(getSaidaProduto().getNfe().getTransportador().getEnderecoPrincipal());
 
         /**Nome do município
          */
@@ -1706,10 +1709,26 @@ public class Nfe {
 
         cobr.setFat(getNewFat());
 
-        if (getSaidaProduto().getContasAReceber() != null)
+        if (getSaidaProduto().getContasAReceber() != null) {
             cobr.getDup().add(getNewDup());
+        } else {
+            Dup dup = new Dup();
 
-        //return cobr;
+            /**Número da Parcela
+             */
+            dup.setNDup("001");
+
+            /**Data de vencimento
+             */
+            dup.setDVenc(getSaidaProduto().getNfe().getDataHoraSaida().format(DTF_MYSQL_DATA));
+
+            /**Valor da Parcela
+             */
+            dup.setVDup(getSaidaProduto().getSaidaProdutoProdutoList()
+                    .stream().map(SaidaProdutoProduto::getVlrLiquido)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add).setScale(2).toString());
+            cobr.getDup().add(dup);
+        }
     }
 
     private Fat getNewFat() {
@@ -1753,7 +1772,7 @@ public class Nfe {
 
         /**Valor da Parcela
          */
-        dup.setNDup(getSaidaProduto().getSaidaProdutoProdutoList()
+        dup.setVDup(getSaidaProduto().getSaidaProdutoProdutoList()
                 .stream().map(SaidaProdutoProduto::getVlrLiquido)
                 .reduce(BigDecimal.ZERO, BigDecimal::add).setScale(2).toString());
 
@@ -1812,18 +1831,20 @@ public class Nfe {
     /**
      * Grupo Z. Informações Adicionais da NF-e
      */
-    private void getNewInfAdic() {
-        InfAdic infAdic = getTnFe().getInfNFe().getInfAdic();
-
-        infAdic.setInfCpl(getSaidaProduto().getNfe().getInformacaoAdicional());
-
-        //return infAdic;
+    private InfAdic getNewInfAdic() {
+        if (getSaidaProduto().getNfe().getInformacaoAdicional() != null &&
+                !getSaidaProduto().getNfe().getInformacaoAdicional().equals("")) {
+            InfAdic infAdic = new InfAdic();
+            infAdic.setInfCpl(getSaidaProduto().getNfe().getInformacaoAdicional());
+            return infAdic;
+        }
+        return null;
     }
 
-    private static String strValueOf(TNFe tnFe) throws JAXBException {
+    private static String strValueOf(TEnviNFe tEnviNFe) throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(TNFe.class);
         Marshaller marshaller = context.createMarshaller();
-        JAXBElement<TNFe> element = new ObjectFactory().createNFe((tnFe));
+        JAXBElement<TEnviNFe> element = new ObjectFactory().createEnviNFe(tEnviNFe);
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.FALSE);
         marshaller.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
 
@@ -1861,5 +1882,11 @@ public class Nfe {
         this.saidaProduto = saidaProduto;
     }
 
+    public TEnviNFe gettEnviNFe() {
+        return tEnviNFe;
+    }
 
+    public void settEnviNFe(TNFe tnNFe) {
+        this.tEnviNFe = new EnviNFe(tnNFe).gettEnviNFe();
+    }
 }

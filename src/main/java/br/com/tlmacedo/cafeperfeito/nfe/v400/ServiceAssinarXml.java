@@ -2,7 +2,6 @@ package br.com.tlmacedo.cafeperfeito.nfe.v400;
 
 import br.com.tlmacedo.cafeperfeito.service.ServiceXmlUtil;
 import br.inf.portalfiscal.xsd.nfe.nfe.TNFe;
-import javafx.util.Pair;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -12,7 +11,6 @@ import javax.xml.bind.JAXBException;
 import javax.xml.crypto.MarshalException;
 import javax.xml.crypto.dsig.*;
 import javax.xml.crypto.dsig.dom.DOMSignContext;
-import javax.xml.crypto.dsig.keyinfo.KeyInfo;
 import javax.xml.crypto.dsig.spec.C14NMethodParameterSpec;
 import javax.xml.crypto.dsig.spec.TransformParameterSpec;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -28,7 +26,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -42,13 +39,13 @@ import java.util.Collections;
 public class ServiceAssinarXml {
     private static final String NFE = "NFe";
 
-    private PrivateKey privateKey;
-    private KeyInfo keyInfo;
     private Document document;
     private XMLSignatureFactory signatureFactory;
     private ArrayList<Transform> transformList;
+    private ServiceLoadCertificates certificates;
 
-    public ServiceAssinarXml(String xml) {
+    public ServiceAssinarXml(String xml, ServiceLoadCertificates certificates) {
+        setCertificates(certificates);
         assinar(xml);
     }
 
@@ -65,10 +62,8 @@ public class ServiceAssinarXml {
         setDocument(documentFactory(xml));
         setSignatureFactory(XMLSignatureFactory.getInstance("DOM"));
         setTransformList(signatureFactory(getSignatureFactory()));
-//        KeyStore ks = new ServiceLoadCertificates().getCertInfos(getSignatureFactory());
-        Pair<KeyInfo, PrivateKey> pair = new ServiceLoadCertificates().getCertInfos(getSignatureFactory());
-        setKeyInfo(pair.getKey());
-        setPrivateKey(pair.getValue());
+
+        getCertificates().setKeyInfo(getSignatureFactory());
 
         for (int i = 0; i < getDocument().getElementsByTagName(NFE).getLength(); i++) {
             assinarNFe(i);
@@ -82,12 +77,8 @@ public class ServiceAssinarXml {
         try {
             document = factory.newDocumentBuilder().parse(
                     new ByteArrayInputStream(xml.getBytes()));
-        } catch (SAXException e) {
-            e.printStackTrace();
-        } catch (ParserConfigurationException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (SAXException | ParserConfigurationException | IOException ex) {
+            ex.printStackTrace();
         }
         return document;
     }
@@ -102,10 +93,8 @@ public class ServiceAssinarXml {
                     "http://www.w3.org/TR/2001/REC-xml-c14n-20010315", tps);
             transformList.add(envelopedTransform);
             transformList.add(c14NTransform);
-        } catch (InvalidAlgorithmParameterException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+        } catch (InvalidAlgorithmParameterException | NoSuchAlgorithmException ex) {
+            ex.printStackTrace();
         }
         return transformList;
     }
@@ -125,21 +114,18 @@ public class ServiceAssinarXml {
                     getSignatureFactory().newSignatureMethod(SignatureMethod.RSA_SHA1, null),
                     Collections.singletonList(reference));
 
-            XMLSignature signature = getSignatureFactory().newXMLSignature(signedInfo, getKeyInfo());
+            XMLSignature signature = getSignatureFactory().newXMLSignature(signedInfo, getCertificates().getKeyInfo());
 
-            DOMSignContext domSignContext = new DOMSignContext(getPrivateKey(),
+            DOMSignContext domSignContext = new DOMSignContext(getCertificates().getPrivateKey(),
                     getDocument().getElementsByTagName(NFE).item(indexNFe));
 
             domSignContext.setBaseURI("ok");
 
             signature.sign(domSignContext);
 
-        } catch (InvalidAlgorithmParameterException | MarshalException | XMLSignatureException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+        } catch (InvalidAlgorithmParameterException | MarshalException | XMLSignatureException | NoSuchAlgorithmException ex) {
+            ex.printStackTrace();
         }
-        //outputXML(getDocument());
     }
 
     public String outputXML() {
@@ -161,22 +147,6 @@ public class ServiceAssinarXml {
         }
         //System.out.printf("\n\n\nxml: *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*\n[%s]\n", xml);
         return xml;
-    }
-
-    public PrivateKey getPrivateKey() {
-        return privateKey;
-    }
-
-    public void setPrivateKey(PrivateKey privateKey) {
-        this.privateKey = privateKey;
-    }
-
-    public KeyInfo getKeyInfo() {
-        return keyInfo;
-    }
-
-    public void setKeyInfo(KeyInfo keyInfo) {
-        this.keyInfo = keyInfo;
     }
 
     public Document getDocument() {
@@ -201,5 +171,13 @@ public class ServiceAssinarXml {
 
     public void setTransformList(ArrayList<Transform> transformList) {
         this.transformList = transformList;
+    }
+
+    public ServiceLoadCertificates getCertificates() {
+        return certificates;
+    }
+
+    public void setCertificates(ServiceLoadCertificates certificates) {
+        this.certificates = certificates;
     }
 }

@@ -10,7 +10,7 @@ import br.com.tlmacedo.cafeperfeito.nfe.v400.Nfe;
 import br.com.tlmacedo.cafeperfeito.nfe.v400.ServiceGerarChaveNfe;
 import br.com.tlmacedo.cafeperfeito.service.*;
 import br.com.tlmacedo.cafeperfeito.view.ViewSaidaProduto;
-import br.inf.portalfiscal.xsd.nfe.nfe.TNFe;
+import br.inf.portalfiscal.xsd.nfe.enviNFe.TEnviNFe;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXDatePicker;
 import com.jfoenix.controls.JFXTextField;
@@ -725,13 +725,13 @@ public class ControllerSaidaProduto implements Initializable, ModeloCafePerfeito
 
             nfe.setChave(ServiceGerarChaveNfe.Gerar(nfe));
 
-            TNFe tnFe = new Nfe(getSaidaProduto()).getTnFe();
+            TEnviNFe tEnviNFe = new Nfe(getSaidaProduto()).gettEnviNFe();
 
-            ServiceFileSave.saveNfeXmlOut(tnFe);
+            ServiceFileSave.saveNfeXmlOut(tEnviNFe);
 
             //ServiceFileSave.saveNfeXmlOut(ServiceXmlUtil.xmlToObject(new ServiceAssinarXml(tnFe).outputXML(), TNFe.class));
 
-            getSaidaProduto().getNfe().setConsumidorFinal(Boolean.parseBoolean(tnFe.getInfNFe().getIde().getIndFinal()));
+            getSaidaProduto().getNfe().setConsumidorFinal(Boolean.parseBoolean(tEnviNFe.getNFe().get(0).getInfNFe().getIde().getIndFinal()));
             getSaidaProduto().getNfe().setStatus(NfeStatusSEFAZ.DIGITACAO);
 
         } catch (Exception ex) {

@@ -537,20 +537,20 @@ public class Empresa extends RecursiveTreeObject<Empresa> implements Serializabl
                 .findFirst().orElse(null);
     }
 
-    //    @Transient
-//    public Endereco getEnderecoNFe() {
-//        return getEnderecoList().stream()
-//                .filter(endereco -> endereco.tipoProperty().get() == EnderecoTipo.PRINCIPAL.getCod())
-//                .findFirst().orElse(null);
-//    }
-//
-//    @Transient
-//    public Endereco getEnderecoNFeEntrega() {
-//        return getEnderecoList().stream()
-//                .filter(endereco -> endereco.tipoProperty().get() == EnderecoTipo.ENTREGA.getCod())
-//                .findFirst().orElse(null);
-//    }
-//
+    @Transient
+    public Endereco getEnderecoNFe() {
+        return getEnderecoList().stream()
+                .filter(endereco -> endereco.tipoProperty().get() == EnderecoTipo.PRINCIPAL.getCod())
+                .findFirst().orElse(null);
+    }
+
+    @Transient
+    public Endereco getEnderecoNFeEntrega() {
+        return getEnderecoList().stream()
+                .filter(endereco -> endereco.tipoProperty().get() == EnderecoTipo.ENTREGA.getCod())
+                .findFirst().orElse(null);
+    }
+
     @Transient
     @JsonIgnore
     public String getEnderecoPrincipal() {

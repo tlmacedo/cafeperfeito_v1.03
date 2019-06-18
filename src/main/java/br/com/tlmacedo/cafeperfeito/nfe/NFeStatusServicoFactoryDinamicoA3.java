@@ -2,7 +2,7 @@ package br.com.tlmacedo.cafeperfeito.nfe;
 
 import br.com.tlmacedo.cafeperfeito.nfe.v400.ServiceLoadCertificates;
 import br.com.tlmacedo.cafeperfeito.service.ServiceVariaveisSistema;
-import br.inf.portalfiscal.wsdl.nfe.hom.NfeStatusServico4.NfeStatusServico4Stub;
+import br.inf.portalfiscal.wsdl.nfe.hom.nfeStatusServico4.NfeStatusServico4Stub;
 import br.inf.portalfiscal.xsd.nfe.consStatServ.TConsStatServ;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.util.AXIOMUtil;

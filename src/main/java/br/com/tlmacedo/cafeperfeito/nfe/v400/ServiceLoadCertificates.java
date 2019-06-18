@@ -2,7 +2,6 @@ package br.com.tlmacedo.cafeperfeito.nfe.v400;
 
 import br.com.tlmacedo.cafeperfeito.service.ServiceAlertMensagem;
 import br.com.tlmacedo.cafeperfeito.service.ServiceSocketFactoryDinamico;
-import javafx.util.Pair;
 import org.apache.commons.httpclient.protocol.Protocol;
 
 import javax.security.auth.callback.PasswordCallback;
@@ -38,6 +37,17 @@ public class ServiceLoadCertificates {
 
     public void loadToken() {
         try {
+//        if (getSenhaDoCertificado() == null) {
+////            Platform.runLater(() -> {
+//                setAlertMensagem(new ServiceAlertMensagem());
+//                getAlertMensagem().setCabecalho("Token certificado");
+//                getAlertMensagem().setPromptText("Senha do certificado");
+//
+//                setSenhaDoCertificado(getAlertMensagem().getRetornoAlert_PasswordField().get());
+////            });
+//            if (getSenhaDoCertificado() == null)
+//                return null;
+//        }
             String configName = "/Volumes/150GB-Development/cafeperfeito/cafeperfeito_v1.03/src/main/resources/certificado/tokenSafeNet5100.cfg";
 
             Provider p = Security.getProvider("SunPKCS11");
@@ -78,29 +88,19 @@ public class ServiceLoadCertificates {
         }
     }
 
-    public Pair<KeyInfo, PrivateKey> getCertInfos(XMLSignatureFactory signatureFactory) {
-        if (getX509Certificate() == null)
+    public void setKeyInfo(XMLSignatureFactory signatureFactory) {
+        if (getX509Certificate() == null) {
             loadToken();
-//        if (getSenhaDoCertificado() == null) {
-////            Platform.runLater(() -> {
-//                setAlertMensagem(new ServiceAlertMensagem());
-//                getAlertMensagem().setCabecalho("Token certificado");
-//                getAlertMensagem().setPromptText("Senha do certificado");
-//
-//                setSenhaDoCertificado(getAlertMensagem().getRetornoAlert_PasswordField().get());
-////            });
-//            if (getSenhaDoCertificado() == null)
-//                return null;
-//        }
+            System.out.printf("loadToken");
+        }
 
         KeyInfoFactory keyInfoFactory = signatureFactory.getKeyInfoFactory();
         List<X509Certificate> x509Content = new ArrayList<X509Certificate>();
 
         x509Content.add(getX509Certificate());
         X509Data x509Data = keyInfoFactory.newX509Data(x509Content);
-        setKeyInfo(keyInfoFactory.newKeyInfo(Collections.singletonList(x509Data)));
 
-        return new Pair<KeyInfo, PrivateKey>(getKeyInfo(), getPrivateKey());
+        this.keyInfo = keyInfoFactory.newKeyInfo(Collections.singletonList(x509Data));
     }
 
     public void abreSocketDinamico() {
@@ -129,10 +129,6 @@ public class ServiceLoadCertificates {
 
     public KeyInfo getKeyInfo() {
         return keyInfo;
-    }
-
-    public void setKeyInfo(KeyInfo keyInfo) {
-        this.keyInfo = keyInfo;
     }
 
     public String getSenhaDoCertificado() {

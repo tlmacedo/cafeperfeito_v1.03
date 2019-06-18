@@ -1,8 +1,7 @@
 package br.com.tlmacedo.cafeperfeito.service;
 
-import br.com.tlmacedo.cafeperfeito.xsd.sistema.config.TConfig;
 import br.inf.portalfiscal.xsd.nfe.enviNFe.TEnviNFe;
-import br.inf.portalfiscal.xsd.nfe.nfe.TNFe;
+import br.inf.portalfiscal.xsd.nfe.enviNFe.TNFe;
 import br.inf.portalfiscal.xsd.nfe.procNFe.TNfeProc;
 import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.XMLSerializer;
@@ -22,7 +21,7 @@ public class ServiceXmlUtil {
     private static final String RECIBO = "TRecibo";
     private static final String STATUS = "TConsStatServ";
     private static final String SITUACAO_NFE = "TConsSitNFe";
-    private static final String ENVIO_NFE = "TEnviNFe";
+    private static final String TENVINFE = "TEnviNFe";
     private static final String DIST_DFE = "DistDFeInt";
     private static final String INUTILIZACAO = "TInutNFe";
     private static final String TNFE = "TNFe";
@@ -56,7 +55,7 @@ public class ServiceXmlUtil {
     }
 
     public static <T> T xmlToObject(String xml, Class<T> classe) throws JAXBException {
-        JAXBContext context = JAXBContext.newInstance(TConfig.class);
+        JAXBContext context = JAXBContext.newInstance(classe);
         Unmarshaller unmarshaller = context.createUnmarshaller();
 
         return unmarshaller.unmarshal(new StreamSource(new StringReader(xml)), classe).getValue();
@@ -67,7 +66,7 @@ public class ServiceXmlUtil {
 
         JAXBContext context = null;
         JAXBElement<?> element = null;
-//        System.out.printf("obj.getClass().getSimpleName(): [%s]\n", obj.getClass().getSimpleName());
+        System.out.printf("obj.getClass().getSimpleName(): [%s]\n", obj.getClass().getSimpleName());
         switch (obj.getClass().getSimpleName()) {
 //            case "TInformacaoBasica":
 //                context = JAXBContext.newInstance(TInformacaoBasica.class);
@@ -78,16 +77,16 @@ public class ServiceXmlUtil {
 //                context = JAXBContext.newInstance(TConsStatServ.class);
 //                element = new br.inf.portalfiscal.xsd.nfe.consStatServ.ObjectFactory().createConsStatServ((TConsStatServ) obj);
 //                break;
-//
+
             case TNFE:
                 context = JAXBContext.newInstance(TNFe.class);
-                element = new br.inf.portalfiscal.xsd.nfe.nfe.ObjectFactory().createNFe((TNFe) obj);
+                element = new br.inf.portalfiscal.xsd.nfe.enviNFe.ObjectFactory().createEnviNFe((TEnviNFe) obj);
                 break;
             case NFEPROC:
                 context = JAXBContext.newInstance(TNfeProc.class);
                 element = new br.inf.portalfiscal.xsd.nfe.procNFe.ObjectFactory().createNfeProc((TNfeProc) obj);
                 break;
-            case ENVIO_NFE:
+            case TENVINFE:
                 context = JAXBContext.newInstance(TEnviNFe.class);
                 element = new br.inf.portalfiscal.xsd.nfe.enviNFe.ObjectFactory().createEnviNFe((TEnviNFe) obj);
                 break;
