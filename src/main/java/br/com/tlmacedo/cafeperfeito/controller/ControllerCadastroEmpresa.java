@@ -120,17 +120,17 @@ public class ControllerCadastroEmpresa implements Initializable, ModeloCafePerfe
     public JFXListView<InfoReceitaFederal> listQsaReceitaFederal;
     boolean tabCarregada = false;
 
-    StringProperty stpDtCad = new SimpleStringProperty("");
-    StringProperty stpDtCadDiff = new SimpleStringProperty("");
-    StringProperty stpDtAtualiz = new SimpleStringProperty("");
+    private StringProperty stpDtCad = new SimpleStringProperty("");
+    private StringProperty stpDtCadDiff = new SimpleStringProperty("");
+    private StringProperty stpDtAtualiz = new SimpleStringProperty("");
     private String nomeTab = "";
-    StringProperty stpDtAtualizDiff = new SimpleStringProperty("");
-    StringProperty stpNatJuridica = new SimpleStringProperty("");
+    private StringProperty stpDtAtualizDiff = new SimpleStringProperty("");
+    private StringProperty stpNatJuridica = new SimpleStringProperty("");
 
     private TabModelEmpresa modelEmpresa;
     private TabModelEmpresaProdutoValor modelEmpresaProdutoValor;
-    StringProperty stpDtAbert = new SimpleStringProperty("");
-    StringProperty stpDtAbertDiff = new SimpleStringProperty("");
+    private StringProperty stpDtAbert = new SimpleStringProperty("");
+    private StringProperty stpDtAbertDiff = new SimpleStringProperty("");
     private ServiceAlertMensagem alertMensagem;
     private EventHandler eventHandlerCadastroEmpresa;
     private ObjectProperty<StatusBarEmpresa> statusBar = new SimpleObjectProperty<>();
@@ -183,10 +183,10 @@ public class ControllerCadastroEmpresa implements Initializable, ModeloCafePerfe
         setTabCarregada(new ServiceSegundoPlano().tarefaAbreCadastro(taskCadastroEmpresa(), getListaTarefa().size(),
                 String.format("Abrindo %s", getNomeTab())));
 
-        formatCnpj = new ServiceMascara();
-        formatCnpj.fieldMask(txtCNPJ, MASK_CNPJ);
-        formatIe = new ServiceMascara();
-        formatIe.fieldMask(txtIE, ServiceMascara.getMascaraIE(TCONFIG.getInfLoja().getUf()));
+        setFormatCnpj(new ServiceMascara());
+        getFormatCnpj().fieldMask(getTxtCNPJ(), MASK_CNPJ);
+        setFormatIe(new ServiceMascara());
+        getFormatIe().fieldMask(getTxtIE(), ServiceMascara.getMascaraIE(TCONFIG.getInfLoja().getUf()));
     }
 
 
@@ -195,13 +195,13 @@ public class ControllerCadastroEmpresa implements Initializable, ModeloCafePerfe
         ServiceMascara.fatorarColunaCheckBox(TabModelEmpresa.getColunaIsCliente());
         ServiceMascara.fatorarColunaCheckBox(TabModelEmpresa.getColunaIsFornecedor());
         ServiceMascara.fatorarColunaCheckBox(TabModelEmpresa.getColunaIsTransportadora());
-        listEndereco.setCellFactory(param -> new FormatListCell_Endereco());
-        listTelefone.setCellFactory(param -> new FormatListCell_Telefone());
-        listAtividadePrincipal.setCellFactory(param -> new FormatListCell_InfoReceitaFederal());
-        listAtividadeSecundaria.setCellFactory(param -> new FormatListCell_InfoReceitaFederal());
-        listQsaReceitaFederal.setCellFactory(param -> new FormatListCell_InfoReceitaFederal());
-        listContatoTelefone.setCellFactory(param -> new FormatListCell_Telefone());
-        listContatoEmailHomePage.setCellFactory(param -> new FormatListCell_EmailHomePage());
+        getListEndereco().setCellFactory(param -> new FormatListCell_Endereco());
+        getListTelefone().setCellFactory(param -> new FormatListCell_Telefone());
+        getListAtividadePrincipal().setCellFactory(param -> new FormatListCell_InfoReceitaFederal());
+        getListAtividadeSecundaria().setCellFactory(param -> new FormatListCell_InfoReceitaFederal());
+        getListQsaReceitaFederal().setCellFactory(param -> new FormatListCell_InfoReceitaFederal());
+        getListContatoTelefone().setCellFactory(param -> new FormatListCell_Telefone());
+        getListContatoEmailHomePage().setCellFactory(param -> new FormatListCell_EmailHomePage());
 
     }
 
@@ -332,7 +332,7 @@ public class ControllerCadastroEmpresa implements Initializable, ModeloCafePerfe
                     case F6:
                         if (!event.isShiftDown()) {
                             if (!teclaFuncaoDisponivel(event.getCode())) return;
-                            txtCNPJ.requestFocus();
+                            getTxtCNPJ().requestFocus();
                         } else {
                             if (getStatusBar().equals(StatusFormulario.PESQUISA)) return;
                             keyShiftF6();
@@ -1046,8 +1046,10 @@ public class ControllerCadastroEmpresa implements Initializable, ModeloCafePerfe
             return;
         }
         if (getTvEmpresaProdutoValor().isFocused())
-            getEmpresaProdutoValorObservableList().add(new EmpresaProdutoValor());
-
+            if (getEmpresaProdutoValorObservableList().stream()
+                    .filter(empresaProdutoValor -> empresaProdutoValor.getProduto().getId() == 0)
+                    .count() == 0)
+                getEmpresaProdutoValorObservableList().add(new EmpresaProdutoValor());
     }
 
     private void keyDelete() {

@@ -31,66 +31,79 @@ public class ServiceCampoPersonalizado {
             String vlrInicial = "";
             HashMap<String, String> hashMap = null;
             if (node.getAccessibleText() != null) {
-                hashMap = ServiceMascara.getFieldFormatMap(node.getAccessibleText());
-                if (!hashMap.containsKey("value")) continue;
-                if ((vlrInicial = hashMap.get("value")) == null)
-                    vlrInicial = "";
-                if (node instanceof Label) {
-                    if (hashMap.containsKey("binding"))
-                        if (hashMap.get("binding").equals("true")) ;
-                        else
-                            ((Label) node).setText(vlrInicial);
-                } else if (node instanceof JFXTextField)
-                    ((JFXTextField) node).setText(vlrInicial);
-                else if (node instanceof JFXCheckBox)
-                    ((JFXCheckBox) node).setSelected(vlrInicial.equals("true") || vlrInicial.equals("verdadeiro"));
-                else if (node instanceof JFXComboBox)
-                    if (vlrInicial.equals("")) {
-                        ((JFXComboBox) node).getSelectionModel().select(-1);
-                    } else {
-                        ((JFXComboBox) node).getSelectionModel().select(Integer.parseInt(vlrInicial));
-                    }
-                else if (node instanceof ImageView)
-                    ((ImageView) node).setImage(null);
+                try {
+                    hashMap = ServiceMascara.getFieldFormatMap(node.getAccessibleText());
+                    if (!hashMap.containsKey("value")) continue;
+                    if ((vlrInicial = hashMap.get("value")) == null)
+                        vlrInicial = "";
 
-                else if (node instanceof DatePicker)
-                    if (hashMap.containsKey("binding")) {
-                        if (hashMap.get("binding").equals("true")) ;
-                    } else {
+                    if (hashMap.containsKey("binding"))
+                        if (hashMap.get("binding").equals("true"))
+                            continue;
+                    if (node instanceof Label)
+//                    if (hashMap.containsKey("binding"))
+//                        if (hashMap.get("binding").equals("true")) ;
+//                        else
+                        ((Label) node).setText(vlrInicial);
+                    else if (node instanceof JFXTextField)
+                        ((JFXTextField) node).setText(vlrInicial);
+                    else if (node instanceof JFXCheckBox)
+                        ((JFXCheckBox) node).setSelected(vlrInicial.equals("true") || vlrInicial.equals("verdadeiro"));
+                    else if (node instanceof JFXComboBox)
                         if (vlrInicial.equals("")) {
-                            ((DatePicker) node).setValue(LocalDate.now());
+                            ((JFXComboBox) node).getSelectionModel().select(-1);
                         } else {
-                            ((DatePicker) node).setValue(LocalDate.parse(vlrInicial));
+                            ((JFXComboBox) node).getSelectionModel().select(Integer.parseInt(vlrInicial));
                         }
-                    }
-                else if (node instanceof JFXDatePicker)
-                    if (hashMap.containsKey("binding")) {
-                        if (hashMap.get("binding").equals("true")) ;
+                    else if (node instanceof ImageView)
+                        ((ImageView) node).setImage(null);
+
+                    else if (node instanceof DatePicker)
+                        if (hashMap.containsKey("binding")) {
+                            if (hashMap.get("binding").equals("true")) ;
+                        } else {
+                            if (vlrInicial.equals("")) {
+                                ((DatePicker) node).setValue(LocalDate.now());
+                            } else {
+                                ((DatePicker) node).setValue(LocalDate.parse(vlrInicial));
+                            }
+                        }
+                    else if (node instanceof JFXDatePicker)
+                        if (hashMap.containsKey("binding")) {
+                            if (hashMap.get("binding").equals("true")) ;
+                        } else {
+                            if (vlrInicial.equals("")) {
+                                ((JFXDatePicker) node).setValue(LocalDate.now());
+                            } else {
+                                ((JFXDatePicker) node).setValue(LocalDate.parse(vlrInicial));
+                            }
+                        }
+                    else if (node instanceof JFXTimePicker)
+                        if (hashMap.containsKey("binding")) {
+                            if (hashMap.get("binding").equals("true")) ;
+                        } else {
+                            if (vlrInicial.equals("")) {
+                                ((JFXTimePicker) node).setValue(LocalTime.now());
+                            } else {
+                                ((JFXTimePicker) node).setValue(LocalTime.parse(vlrInicial));
+                            }
+                        }
+                    else if (node instanceof JFXTreeTableView)
+                        ((JFXTreeTableView) node).getColumns().clear();
+                    else if (node instanceof TableView)
+                        ((TableView) node).getItems().clear();
+                    else if (node instanceof Circle)
+                        ((Circle) node).setFill(FUNDO_RADIAL_GRADIENT);
+                    else if (node instanceof JFXListView)
+                        ((JFXListView) node).getItems().clear();
+                } catch (Exception ex) {
+                    if (ex instanceof RuntimeException) {
+                        new ServiceAlertMensagem("Erro", String.format("tente colocar no FXML do campo: [%s] a informação: [%s]\n",
+                                node.getId(), "binding::true;"), null).getRetornoAlert_OK();
                     } else {
-                        if (vlrInicial.equals("")) {
-                            ((JFXDatePicker) node).setValue(LocalDate.now());
-                        } else {
-                            ((JFXDatePicker) node).setValue(LocalDate.parse(vlrInicial));
-                        }
+                        ex.printStackTrace();
                     }
-                else if (node instanceof JFXTimePicker)
-                    if (hashMap.containsKey("binding")) {
-                        if (hashMap.get("binding").equals("true")) ;
-                    } else {
-                        if (vlrInicial.equals("")) {
-                            ((JFXTimePicker) node).setValue(LocalTime.now());
-                        } else {
-                            ((JFXTimePicker) node).setValue(LocalTime.parse(vlrInicial));
-                        }
-                    }
-                else if (node instanceof JFXTreeTableView)
-                    ((JFXTreeTableView) node).getColumns().clear();
-                else if (node instanceof TableView)
-                    ((TableView) node).getItems().clear();
-                else if (node instanceof Circle)
-                    ((Circle) node).setFill(FUNDO_RADIAL_GRADIENT);
-                else if (node instanceof JFXListView)
-                    ((JFXListView) node).getItems().clear();
+                }
             }
             if (node instanceof AnchorPane)
                 fieldClear((AnchorPane) node);
@@ -140,7 +153,6 @@ public class ServiceCampoPersonalizado {
                     fieldDisable((AnchorPane) tab.getContent(), setDisable);
         }
     }
-
 
 
     public static void fieldMask(AnchorPane anchorPane) {

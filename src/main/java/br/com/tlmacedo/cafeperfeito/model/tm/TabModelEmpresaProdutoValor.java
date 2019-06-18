@@ -232,9 +232,9 @@ public class TabModelEmpresaProdutoValor {
                     if (data.valorProperty().get() != BigDecimal.ZERO)
                         return ServiceMascara.getMoeda(data.valorProperty().get().setScale(2).toString(), 2);
                             String value = BigDecimal.ZERO.setScale(2).toString();
-                            if (data.produtoProperty().get().precoConsumidorProperty().get() != null)
+                    if (!data.produtoProperty().get().precoConsumidorProperty().get().equals(BigDecimal.ZERO))
                                 value = ServiceMascara.getMoeda(data.produtoProperty().get().precoConsumidorProperty().get().setScale(2).toString(), 2);
-                    param.getValue().setValor(new BigDecimal(value.toString()));
+                    param.getValue().setValor(new BigDecimal(value));
                             return value;
                         }, data.produtoProperty()
                 );

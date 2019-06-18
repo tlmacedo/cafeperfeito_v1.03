@@ -171,6 +171,7 @@ public class ControllerEntradaProduto implements Initializable, ModeloCafePerfei
     private ObjectProperty<BigDecimal> totalBruto = new SimpleObjectProperty<BigDecimal>(BigDecimal.ZERO.setScale(2));
     private ObjectProperty<BigDecimal> totalFrete = new SimpleObjectProperty<BigDecimal>(BigDecimal.ZERO.setScale(2));
     private ObjectProperty<BigDecimal> totalImpostoEntrada = new SimpleObjectProperty<BigDecimal>(BigDecimal.ZERO.setScale(2));
+    private ObjectProperty<BigDecimal> totalImpostoItens = new SimpleObjectProperty<BigDecimal>(BigDecimal.ZERO.setScale(2));
     private ObjectProperty<BigDecimal> totalImposto = new SimpleObjectProperty<BigDecimal>(BigDecimal.ZERO.setScale(2));
     private ObjectProperty<BigDecimal> totalDesconto = new SimpleObjectProperty<BigDecimal>(BigDecimal.ZERO.setScale(2));
     private ObjectProperty<BigDecimal> totalLiquido = new SimpleObjectProperty<BigDecimal>(BigDecimal.ZERO.setScale(2));
@@ -224,8 +225,7 @@ public class ControllerEntradaProduto implements Initializable, ModeloCafePerfei
         getLblStatus().textProperty().bind(Bindings.createStringBinding(() -> {
             switch (statusBarProperty().get()) {
                 case DIGITACAO:
-                    limparCampos();
-                    getTxtNfeChave().requestFocus();
+                    ControllerPrincipal.ctrlPrincipal.painelViewPrincipal.fireEvent(ServiceComandoTecladoMouse.pressTecla(KeyCode.F1));
                     break;
                 case LANCADO:
                 case INCLUIDO:
@@ -273,7 +273,8 @@ public class ControllerEntradaProduto implements Initializable, ModeloCafePerfei
                 switch (event.getCode()) {
                     case F1:
                         if (!teclaFuncaoDisponivel(event.getCode())) return;
-                        setStatusBar(StatusBarEntradaProduto.DIGITACAO);
+                        limparCampos();
+                        getTxtNfeChave().requestFocus();
                         break;
                     case F2:
                         if (!teclaFuncaoDisponivel(event.getCode())) return;
@@ -496,6 +497,67 @@ public class ControllerEntradaProduto implements Initializable, ModeloCafePerfei
                     }
                 }, getTxtNfeFiscalVlrNFe().textProperty(), getTxtNfeFiscalVlrTotal().textProperty()
         ));
+
+        getTxtCteFiscalVlrTotal().textProperty().bind(Bindings.createStringBinding(() -> {
+                    BigDecimal vlrTributo = ServiceMascara.getBigDecimalFromTextField(getTxtCteFiscalVlrTributo().getText(), 2);
+                    BigDecimal vlrMulta = ServiceMascara.getBigDecimalFromTextField(getTxtCteFiscalVlrMulta().getText(), 2);
+                    BigDecimal vlrJuros = ServiceMascara.getBigDecimalFromTextField(getTxtCteFiscalVlrJuros().getText(), 2);
+                    BigDecimal vlrTaxa = ServiceMascara.getBigDecimalFromTextField(getTxtCteFiscalVlrTaxa().getText(), 2);
+
+                    return ServiceMascara.getMoeda2(vlrTributo.add(vlrMulta).add(vlrJuros).add(vlrTaxa), 2);
+                }, getTxtCteFiscalVlrTributo().textProperty(), getTxtCteFiscalVlrMulta().textProperty(),
+                getTxtCteFiscalVlrJuros().textProperty(), getTxtCteFiscalVlrTaxa().textProperty()
+        ));
+
+        getTxtCteFiscalVlrPercentual().textProperty().bind(Bindings.createStringBinding(() -> {
+                    BigDecimal vlrCte = ServiceMascara.getBigDecimalFromTextField(getTxtCteFiscalVlrCte().getText(), 2);
+                    BigDecimal vlrTotal = ServiceMascara.getBigDecimalFromTextField(getTxtCteFiscalVlrTotal().getText(), 2);
+                    try {
+                        return ServiceMascara.getMoeda2(vlrTotal
+                                .divide(vlrCte, 5, RoundingMode.HALF_UP)
+                                .multiply(new BigDecimal("100")).setScale(2, RoundingMode.HALF_UP), 2);
+                    } catch (ArithmeticException ae) {
+                        return "0,00";
+                    }
+                }, getTxtCteFiscalVlrCte().textProperty(), getTxtCteFiscalVlrTotal().textProperty()
+        ));
+
+        totalFreteProperty().bind(Bindings.createObjectBinding(() -> {
+                    BigDecimal vlrBruto = ServiceMascara.getBigDecimalFromTextField(getTxtCteVlrBruto().getText(), 2);
+                    BigDecimal vlrTaxa = ServiceMascara.getBigDecimalFromTextField(getTxtCteVlrTaxa().getText(), 2);
+                    BigDecimal vlrColeta = ServiceMascara.getBigDecimalFromTextField(getTxtCteVlrColeta().getText(), 2);
+                    BigDecimal vlrImposto = ServiceMascara.getBigDecimalFromTextField(getTxtCteVlrImposto().getText(), 2);
+                    BigDecimal vlrTotal = vlrBruto.add(vlrTaxa).add(vlrColeta).add(vlrImposto);
+                    getTxtCteVlrLiquido().setText(ServiceMascara.getMoeda2(vlrTotal, 2));
+                    getTxtCteVlrCte().setText(ServiceMascara.getMoeda2(vlrTotal, 2));
+                    if (getTpnCteFiscal().isExpanded())
+                        getTxtCteFiscalVlrCte().setText(ServiceMascara.getMoeda2(vlrTotal, 2));
+
+                    return vlrTotal;
+                }, getTxtCteVlrBruto().textProperty(), getTxtCteVlrTaxa().textProperty(),
+                getTxtCteVlrColeta().textProperty(), getTxtCteVlrImposto().textProperty()
+        ));
+
+        totalImpostoEntradaProperty().bind(Bindings.createObjectBinding(() -> {
+                    BigDecimal vlrImpostoNfe = ServiceMascara.getBigDecimalFromTextField(getTxtNfeFiscalVlrTotal().getText(), 2);
+                    BigDecimal vlrImpostoCte = ServiceMascara.getBigDecimalFromTextField(getTxtCteFiscalVlrTotal().getText(), 2);
+
+                    return vlrImpostoNfe.add(vlrImpostoCte);
+
+                }, getTxtNfeFiscalVlrTotal().textProperty(), getTxtCteFiscalVlrTotal().textProperty()
+        ));
+
+        totalImpostoProperty().bind(Bindings.createObjectBinding(() ->
+                        totalImpostoEntradaProperty().get().add(totalImpostoItensProperty().get())
+                , totalImpostoEntradaProperty(), totalImpostoItensProperty()
+        ));
+
+        totalLiquidoProperty().bind(Bindings.createObjectBinding(() ->
+                        (totalBrutoProperty().get().add(totalImpostoProperty().get()).add(totalFreteProperty().get()))
+                                .subtract(totalDescontoProperty().get())
+                , totalBrutoProperty(), totalImpostoProperty(), totalFreteProperty(), totalDescontoProperty()
+        ));
+
     }
 
     /**
@@ -1397,21 +1459,6 @@ public class ControllerEntradaProduto implements Initializable, ModeloCafePerfei
     }
 
     @SuppressWarnings("Duplicates")
-    private void resultVlrCte() {
-        BigDecimal vlrBruto = ServiceMascara.getBigDecimalFromTextField(txtCteVlrBruto.getText(), 2);
-        BigDecimal vlrTaxa = ServiceMascara.getBigDecimalFromTextField(txtCteVlrTaxa.getText(), 2);
-        BigDecimal vlrColeta = ServiceMascara.getBigDecimalFromTextField(txtCteVlrColeta.getText(), 2);
-        BigDecimal vlrImposto = ServiceMascara.getBigDecimalFromTextField(txtCteVlrImposto.getText(), 2);
-
-        BigDecimal vlrTotal = vlrBruto.add(vlrTaxa).add(vlrColeta).add(vlrImposto);
-        txtCteVlrLiquido.setText(vlrTotal.setScale(2).toString());
-        txtCteVlrCte.setText(vlrTotal.setScale(2).toString());
-        if (tpnCteFiscal.isExpanded())
-            txtCteFiscalVlrCte.setText(vlrTotal.setScale(2).toString());
-//        modelEntradaProdutoProduto.setTotalFrete(vlrTotal.setScale(2));
-    }
-
-    @SuppressWarnings("Duplicates")
     private void resultVlrTributoCte() {
         BigDecimal vlrCte = ServiceMascara.getBigDecimalFromTextField(txtCteFiscalVlrCte.getText(), 2);
         BigDecimal vlrTributo = ServiceMascara.getBigDecimalFromTextField(txtCteFiscalVlrTributo.getText(), 2);
@@ -1440,21 +1487,15 @@ public class ControllerEntradaProduto implements Initializable, ModeloCafePerfei
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         setTotalBruto(totBruto.setScale(2));
 
-        BigDecimal totImpostoEntrada = getTotalImpostoEntrada();
         BigDecimal totImpostoItens = getEntradaProdutoProdutoObservableList().stream().map(EntradaProdutoProduto::getVlrImposto)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
-        BigDecimal totImposto = totImpostoEntrada.add(totImpostoItens);
-
-        setTotalImposto(totImposto.setScale(2));
+        setTotalImpostoItens(totImpostoItens);
 
         BigDecimal totFrete = getTotalFrete();
 
         BigDecimal totDesconto = getEntradaProdutoProdutoObservableList().stream().map(EntradaProdutoProduto::getVlrDesconto)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         setTotalDesconto(totDesconto.setScale(2));
-
-        BigDecimal totLiquido = totBruto.add(totImposto).add(totFrete).subtract(totDesconto);
-        setTotalLiquido(totLiquido.setScale(2));
     }
 
     /**
@@ -2254,6 +2295,18 @@ public class ControllerEntradaProduto implements Initializable, ModeloCafePerfei
 
     public ObjectProperty<BigDecimal> totalImpostoEntradaProperty() {
         return totalImpostoEntrada;
+    }
+
+    public BigDecimal getTotalImpostoItens() {
+        return totalImpostoItens.get();
+    }
+
+    public ObjectProperty<BigDecimal> totalImpostoItensProperty() {
+        return totalImpostoItens;
+    }
+
+    public void setTotalImpostoItens(BigDecimal totalImpostoItens) {
+        this.totalImpostoItens.set(totalImpostoItens);
     }
 
     public BigDecimal getTotalImposto() {
