@@ -15,10 +15,10 @@ import static br.com.tlmacedo.cafeperfeito.service.ServiceVariaveisSistema.TCONF
 public class ServiceGerarChaveNfe {
 
     public static String Gerar(SaidaProdutoNfe nfe) {
-        String cUF = String.valueOf(TCONFIG.getNfe().getCUF());
+        String cUF = String.valueOf(TCONFIG.getInfLoja().getCUF());
         String aAMM = String.format("%02d%02d", nfe.getSaidaProduto().getDataCadastro().getYear() % 100,
                 nfe.getSaidaProduto().getDataCadastro().getMonthValue());
-        String cnpj = TCONFIG.getNfe().getCnpj();
+        String cnpj = TCONFIG.getInfLoja().getCnpj();
         String mod = String.format("%02d", nfe.getModelo().getCod());
         String serie = String.format("%03d", nfe.getSerie());
         String nNF = String.format("%09d", nfe.getNumero());

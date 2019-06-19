@@ -87,3 +87,6 @@ fabric.properties
 
 /.idea/
 /target/
+/src/main/resources/xml/nfe/in/
+/src/main/resources/xml/cte/in/
+/src/main/resources/xml/nfe/out/

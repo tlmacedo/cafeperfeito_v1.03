@@ -103,7 +103,7 @@ public class ServiceLoadCertificates {
         this.keyInfo = keyInfoFactory.newKeyInfo(Collections.singletonList(x509Data));
     }
 
-    public void abreSocketDinamico() {
+    public void loadSocketDinamico() {
         ServiceSocketFactoryDinamico socketFactoryDinamico = new ServiceSocketFactoryDinamico(getX509Certificate(), getPrivateKey());
         socketFactoryDinamico.setFileCacerts("/Volumes/150GB-Development/cafeperfeito/cafeperfeito_v1.03/src/main/resources/certificado/NFeCacerts");
 

@@ -5,7 +5,6 @@ import br.inf.portalfiscal.xsd.nfe.nfe.TNFe;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.crypto.MarshalException;
@@ -13,17 +12,6 @@ import javax.xml.crypto.dsig.*;
 import javax.xml.crypto.dsig.dom.DOMSignContext;
 import javax.xml.crypto.dsig.spec.C14NMethodParameterSpec;
 import javax.xml.crypto.dsig.spec.TransformParameterSpec;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -59,7 +47,7 @@ public class ServiceAssinarXml {
     }
 
     private void assinar(String xml) {
-        setDocument(documentFactory(xml));
+        setDocument(ServiceDocumentFactory.documentFactory(xml));
         setSignatureFactory(XMLSignatureFactory.getInstance("DOM"));
         setTransformList(signatureFactory(getSignatureFactory()));
 
@@ -70,18 +58,18 @@ public class ServiceAssinarXml {
         }
     }
 
-    private Document documentFactory(String xml) {
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        factory.setNamespaceAware(true);
-        Document document = null;
-        try {
-            document = factory.newDocumentBuilder().parse(
-                    new ByteArrayInputStream(xml.getBytes()));
-        } catch (SAXException | ParserConfigurationException | IOException ex) {
-            ex.printStackTrace();
-        }
-        return document;
-    }
+//    private Document documentFactory(String xml) {
+//        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+//        factory.setNamespaceAware(true);
+//        Document document = null;
+//        try {
+//            document = factory.newDocumentBuilder().parse(
+//                    new ByteArrayInputStream(xml.getBytes()));
+//        } catch (SAXException | ParserConfigurationException | IOException ex) {
+//            ex.printStackTrace();
+//        }
+//        return document;
+//    }
 
     private ArrayList<Transform> signatureFactory(XMLSignatureFactory signatureFactory) {
         ArrayList<Transform> transformList = new ArrayList<Transform>();
@@ -128,26 +116,6 @@ public class ServiceAssinarXml {
         }
     }
 
-    public String outputXML() {
-        String xml = null;
-        try {
-            ByteArrayOutputStream os = new ByteArrayOutputStream();
-            TransformerFactory tf = TransformerFactory.newInstance();
-            Transformer trans = tf.newTransformer();
-            trans.transform(new DOMSource(getDocument()), new StreamResult(os));
-            xml = os.toString();
-            if ((xml != null) && (!"".equals(xml))) {
-                xml = xml.replaceAll("\\r\\n", "");
-                xml = xml.replaceAll(" standalone=\"no\"", "");
-            }
-        } catch (TransformerConfigurationException e) {
-            e.printStackTrace();
-        } catch (TransformerException e) {
-            e.printStackTrace();
-        }
-        //System.out.printf("\n\n\nxml: *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*\n[%s]\n", xml);
-        return xml;
-    }
 
     public Document getDocument() {
         return document;

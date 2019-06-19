@@ -2,6 +2,7 @@ package br.com.tlmacedo.cafeperfeito.service;
 
 import br.inf.portalfiscal.xsd.nfe.enviNFe.TEnviNFe;
 import br.inf.portalfiscal.xsd.nfe.enviNFe.TNFe;
+import br.inf.portalfiscal.xsd.nfe.procNFe.TNfeProc;
 
 import javax.xml.bind.JAXBException;
 import java.io.File;
@@ -19,6 +20,34 @@ import static br.com.tlmacedo.cafeperfeito.service.ServiceVariaveisSistema.TCONF
 
 public class ServiceFileSave {
 
+    public static boolean saveNfeProcXmlOut(TNfeProc tNfeProc) {
+        try {
+            System.out.printf(String.format("001[%s]\n",
+                    TCONFIG.getPaths().getPathNFeSaveXmlOut().trim()));
+
+            System.out.printf(String.format("002[%s]\n",
+                    (tNfeProc.getNFe().getInfNFe().getId())));
+
+            System.out.printf(String.format("003[%s]\n",
+                    (tNfeProc.getProtNFe().getInfProt().getCStat().equals("100")) ? "-nfe" : "-naoAutorizado"));
+
+
+            FileWriter arqXml = new FileWriter(new File(
+                    String.format("%s%s%s%s.xml",
+                            System.getProperty("user.dir"),
+                            TCONFIG.getPaths().getPathNFeSaveXmlOut().trim(),
+                            tNfeProc.getNFe().getInfNFe().getId(),
+                            (tNfeProc.getProtNFe().getInfProt().getCStat().equals("100")) ? "-nfe" : "-naoAutorizado")
+            ));
+            arqXml.write(ServiceXmlUtil.objectToXml(tNfeProc));
+            arqXml.close();
+        } catch (JAXBException | IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
     public static boolean saveNfeXmlOut(TEnviNFe tEnviNFe) {
         try {
             TNFe tnFe = tEnviNFe.getNFe().get(0);
@@ -33,7 +62,8 @@ public class ServiceFileSave {
 
 
             FileWriter arqXml = new FileWriter(new File(
-                    String.format("%s%s%s.xml",
+                    String.format("%s%s%s%s.xml",
+                            System.getProperty("user.dir"),
                             TCONFIG.getPaths().getPathNFeSaveXmlOut().trim(),
                             tnFe.getInfNFe().getId(),
                             (tnFe.getSignature() != null) ? "-assinada" : "")

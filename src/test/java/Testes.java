@@ -7,27 +7,40 @@ import br.com.tlmacedo.cafeperfeito.model.vo.enums.NfeCteModelo;
 import br.com.tlmacedo.cafeperfeito.model.vo.enums.NfeDestinoOperacao;
 import br.com.tlmacedo.cafeperfeito.model.vo.enums.NfeModalidadeFrete;
 import br.com.tlmacedo.cafeperfeito.model.vo.enums.NfePresencaComprador;
-import br.com.tlmacedo.cafeperfeito.nfe.v400.Nfe;
-import br.com.tlmacedo.cafeperfeito.nfe.v400.ServiceAssinarXml;
-import br.com.tlmacedo.cafeperfeito.nfe.v400.ServiceGerarChaveNfe;
-import br.com.tlmacedo.cafeperfeito.nfe.v400.ServiceLoadCertificates;
+import br.com.tlmacedo.cafeperfeito.nfe.v400.*;
 import br.com.tlmacedo.cafeperfeito.service.ServiceBuscaWebService;
 import br.com.tlmacedo.cafeperfeito.service.ServiceFileSave;
 import br.com.tlmacedo.cafeperfeito.service.ServiceVariaveisSistema;
 import br.com.tlmacedo.cafeperfeito.service.ServiceXmlUtil;
+import br.inf.portalfiscal.wsdl.nfe.hom.nfeAutorizacao4.NfeAutorizacao4Stub;
+import br.inf.portalfiscal.wsdl.nfe.hom.nfeRetAutorizacao4.NfeRetAutorizacao4Stub;
+import br.inf.portalfiscal.xsd.nfe.consReciNFe.TConsReciNFe;
 import br.inf.portalfiscal.xsd.nfe.enviNFe.TEnviNFe;
+import br.inf.portalfiscal.xsd.nfe.procNFe.TNfeProc;
+import br.inf.portalfiscal.xsd.nfe.retConsReciNFe.TRetConsReciNFe;
+import br.inf.portalfiscal.xsd.nfe.retEnviNFe.TRetEnviNFe;
+import javafx.util.Pair;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.util.AXIOMUtil;
+import org.apache.axis2.AxisFault;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import javax.xml.bind.JAXBException;
+import javax.xml.stream.XMLStreamException;
+import java.rmi.RemoteException;
 import java.time.LocalDateTime;
 import java.util.Scanner;
 
+import static br.com.tlmacedo.cafeperfeito.service.ServiceVariaveisSistema.TCONFIG;
+
 public class Testes {
 
-    private TEnviNFe gerarNovaNFe() {
-        System.out.printf("\nqual saida de produto vc que gerar NF ?");
+    private ServiceLoadCertificates loadCertificates;
+
+    private String gerarNovaNFe() {
+        System.out.printf("\nqual saida de produto vc que gerar NF? ");
         Scanner scan = new Scanner(System.in);
 
         SaidaProdutoNfe nfe = new SaidaProdutoNfe();
@@ -36,7 +49,7 @@ public class Testes {
         nfe.setSaidaProduto(saidaProduto);
         try {
             nfe.setNaturezaOperacao("VENDA DENTRO DO ESTADO");
-            System.out.printf("\nqual o numero da NFe ?");
+            System.out.printf("\nqual o numero da NFe ? ");
             nfe.setNumero(Integer.parseInt(scan.nextLine().replaceAll("\\D", "")));
             nfe.setSerie(001);
             nfe.setModelo(NfeCteModelo.MOD55);
@@ -68,7 +81,9 @@ public class Testes {
 
             ServiceFileSave.saveNfeXmlOut(tEnviNFe);
 
-            return tEnviNFe;
+            String retorno = ServiceXmlUtil.objectToXml(tEnviNFe);
+            System.out.printf("strEnviNFe:\n%s\n\n\n", retorno);
+            return retorno;
 
 //             getSaidaProduto().getNfe().setConsumidorFinal(Boolean.parseBoolean(tnFe.getInfNFe().getIde().getIndFinal()));
 //            getSaidaProduto().getNfe().setStatus(NfeStatusSEFAZ.DIGITACAO);
@@ -80,38 +95,221 @@ public class Testes {
     }
 
 
-    private static String lerXML(String fileXML) throws IOException {
-        String linha = "";
-        StringBuilder xml = new StringBuilder();
-
-        BufferedReader in = new BufferedReader(new InputStreamReader(
-                new FileInputStream(fileXML)));
-        while ((linha = in.readLine()) != null) {
-            xml.append(linha);
+    private String sefazAtutorizacaoNFe(String strEnviNFeAssinado) {
+        String retorno = null;
+        OMElement ome = null;
+        try {
+            ome = AXIOMUtil.stringToOM(strEnviNFeAssinado);
+        } catch (XMLStreamException e) {
+            e.printStackTrace();
         }
-        in.close();
 
-        return xml.toString();
+        NfeAutorizacao4Stub.NfeDadosMsg dadosMsg = new NfeAutorizacao4Stub.NfeDadosMsg();
+        dadosMsg.setExtraElement(ome);
+
+        NfeAutorizacao4Stub stub = null;
+        try {
+            stub = new NfeAutorizacao4Stub();
+        } catch (AxisFault axisFault) {
+            axisFault.printStackTrace();
+        }
+        NfeAutorizacao4Stub.NfeResultMsg result = null;
+        try {
+            result = stub.nfeAutorizacaoLote(dadosMsg);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
+        retorno = result.getExtraElement().toString();
+        System.out.printf("strAutorizacaoNFe:\n%s\n\n\n", retorno);
+        return retorno;
+    }
+
+    private String sefazRetAutorizacaoNFe(String strAutorizacaoNFe) {
+        String retorno = null;
+        boolean retornoValido = true;
+        String xmlConsReciNFe = null;
+
+        TRetEnviNFe tRetEnviNFe = null;
+        try {
+            tRetEnviNFe = ServiceXmlUtil.xmlToObject(strAutorizacaoNFe, TRetEnviNFe.class);
+        } catch (JAXBException e) {
+            e.printStackTrace();
+        }
+
+        TRetConsReciNFe tRetConsReciNFe = null;
+        while (retornoValido) {
+            try {
+                if (strAutorizacaoNFe.length() != 15)
+                    tRetEnviNFe = ServiceXmlUtil.xmlToObject(strAutorizacaoNFe, TRetEnviNFe.class);
+
+                TConsReciNFe tConsReciNFe = new TConsReciNFe();
+                tConsReciNFe.setVersao(TCONFIG.getNfe().getVersao());
+                tConsReciNFe.setTpAmb(String.valueOf(TCONFIG.getNfe().getTpAmb()));
+                if (strAutorizacaoNFe.length() != 15)
+                    tConsReciNFe.setNRec(tRetEnviNFe.getInfRec().getNRec());
+                else
+                    tConsReciNFe.setNRec(strAutorizacaoNFe);
+
+                xmlConsReciNFe = ServiceXmlUtil.objectToXml(tConsReciNFe);
+            } catch (JAXBException e) {
+                e.printStackTrace();
+            }
+
+            System.out.printf("xmlConsReciNFe:\n%s\n\n\n", xmlConsReciNFe);
+
+            OMElement ome = null;
+            try {
+                ome = AXIOMUtil.stringToOM(xmlConsReciNFe);
+            } catch (XMLStreamException e) {
+                e.printStackTrace();
+            }
+
+            NfeRetAutorizacao4Stub.NfeDadosMsg dadosMsg = new NfeRetAutorizacao4Stub.NfeDadosMsg();
+            dadosMsg.setExtraElement(ome);
+
+
+            NfeRetAutorizacao4Stub retAutorizacao4Stub = null;
+            try {
+                retAutorizacao4Stub = new NfeRetAutorizacao4Stub();
+            } catch (AxisFault axisFault) {
+                axisFault.printStackTrace();
+            }
+            NfeRetAutorizacao4Stub.NfeResultMsg result = null;
+            try {
+                result = retAutorizacao4Stub.nfeRetAutorizacaoLote(dadosMsg);
+                retorno = result.getExtraElement().toString();
+                tRetConsReciNFe = ServiceXmlUtil.xmlToObject(retorno, TRetConsReciNFe.class);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            } catch (JAXBException e) {
+                e.printStackTrace();
+            }
+            if (tRetConsReciNFe.getCStat().equals("105")) {
+                System.out.printf("\ncod(%s)Lote em processamento...\n%s\n\n\n", tRetConsReciNFe.getCStat(), retorno);
+            } else {
+                System.out.printf("\ncod(%s)Lote processado...\n%s\n\n\n", tRetConsReciNFe.getCStat(), retorno);
+                retornoValido = false;
+            }
+        }
+
+        System.out.printf("strRetAutorizacaoNFe:\n%s\n\n\n", retorno);
+        return retorno;
+    }
+
+    private String assinarXmlNFe(String strEnviNFe) {
+        ServiceAssinarXml serviceAssinarXml = new ServiceAssinarXml(strEnviNFe, loadCertificates);
+        String strEnviNFeAssinado = ServiceOutputXML.outputXML(serviceAssinarXml.getDocument());
+
+        TEnviNFe tEnviNFe = null;
+        try {
+            tEnviNFe = ServiceXmlUtil.xmlToObject(strEnviNFeAssinado, TEnviNFe.class);
+            ServiceFileSave.saveNfeXmlOut(tEnviNFe);
+        } catch (JAXBException e) {
+            e.printStackTrace();
+        }
+
+        System.out.printf("strEnviNFeAssinado:\n%s\n\n\n", strEnviNFeAssinado);
+        return strEnviNFeAssinado;
+    }
+
+    private String sefazProcNFe(String strEnviNFeAssinado, String strRetAutorizacaoNFe) {
+        String retorno = null;
+        TRetConsReciNFe tRetConsReciNFe = null;
+        TEnviNFe tEnviNFe = null;
+        try {
+            tRetConsReciNFe = ServiceXmlUtil.xmlToObject(strRetAutorizacaoNFe, TRetConsReciNFe.class);
+            tEnviNFe = ServiceXmlUtil.xmlToObject(strEnviNFeAssinado, TEnviNFe.class);
+            retorno = ServiceXmlUtil.objectToXml(tRetConsReciNFe);
+        } catch (JAXBException e) {
+            e.printStackTrace();
+        }
+        System.out.printf("tRetConsReciNFe:\n%s\n\n\n", retorno);
+        if (!tRetConsReciNFe.getProtNFe().get(0).getInfProt().getCStat().equals("100")) {
+            retorno = String.format("retorno do processamento foi inválido! cód(%s) - motivo: [%s]\nmsg: [%s-%s]\n",
+                    tRetConsReciNFe.getProtNFe().get(0).getInfProt().getCStat(),
+                    tRetConsReciNFe.getProtNFe().get(0).getInfProt().getXMotivo(),
+                    tRetConsReciNFe.getProtNFe().get(0).getInfProt().getCMsg(),
+                    tRetConsReciNFe.getProtNFe().get(0).getInfProt().getXMsg()
+            );
+            System.out.printf("deu erro:\n%s\n\n\n", retorno);
+            return retorno;
+        } else {
+            System.out.printf("tamo mais ou menos!!!\n%s\n\n\n", retorno);
+        }
+        try {
+            Pair<br.inf.portalfiscal.xsd.nfe.procNFe.TNFe, br.inf.portalfiscal.xsd.nfe.procNFe.TProtNFe> pair = getTNFeProc(strEnviNFeAssinado, strRetAutorizacaoNFe);
+            TNfeProc tNfeProc = new TNfeProc();
+            tNfeProc.setVersao(TCONFIG.getNfe().getVersao());
+            tNfeProc.setNFe(pair.getKey());
+            tNfeProc.setProtNFe(pair.getValue());
+
+            ServiceFileSave.saveNfeProcXmlOut(tNfeProc);
+
+            retorno = ServiceXmlUtil.objectToXml(tNfeProc);
+        } catch (JAXBException e) {
+            e.printStackTrace();
+        }
+
+        System.out.printf("xmlNFeProc:\n%s\n\n\n", retorno);
+        return retorno;
+    }
+
+    private Pair<br.inf.portalfiscal.xsd.nfe.procNFe.TNFe, br.inf.portalfiscal.xsd.nfe.procNFe.TProtNFe> getTNFeProc(String strEnviNFeAssinado, String strRetAutorizacaoNFe) {
+        Document document = ServiceDocumentFactory.documentFactory(strEnviNFeAssinado);
+        NodeList nodeListNfe = document.getDocumentElement().getElementsByTagName("NFe");
+        NodeList nodeListInfNfe = document.getElementsByTagName("infNFe");
+        br.inf.portalfiscal.xsd.nfe.procNFe.TNFe tnFe = null;
+        br.inf.portalfiscal.xsd.nfe.procNFe.TProtNFe tProtNFe = null;
+        try {
+            for (int i = 0; i < nodeListNfe.getLength(); i++) {
+                Element el = (Element) nodeListInfNfe.item(i);
+                tnFe = ServiceXmlUtil.xmlToObject(ServiceOutputXML.outputXML(nodeListNfe.item(i)), br.inf.portalfiscal.xsd.nfe.procNFe.TNFe.class);
+                tProtNFe = getTProtNFe(strRetAutorizacaoNFe, el.getAttribute("Id"));
+            }
+        } catch (JAXBException e) {
+            e.printStackTrace();
+        }
+        return new Pair<br.inf.portalfiscal.xsd.nfe.procNFe.TNFe, br.inf.portalfiscal.xsd.nfe.procNFe.TProtNFe>(tnFe, tProtNFe);
+    }
+
+    private br.inf.portalfiscal.xsd.nfe.procNFe.TProtNFe getTProtNFe(String xml, String chaveNFe) {
+        br.inf.portalfiscal.xsd.nfe.procNFe.TProtNFe tProtNFe = null;
+        Document document = ServiceDocumentFactory.documentFactory(xml);
+        NodeList nodeListProtNFe = document.getDocumentElement().getElementsByTagName("protNFe");
+        NodeList nodeListChNFe = document.getElementsByTagName("chNFe");
+        for (int i = 0; i < nodeListProtNFe.getLength(); i++) {
+            Element el = (Element) nodeListChNFe.item(i);
+            if (chaveNFe.contains(el.getTextContent())) {
+                try {
+                    tProtNFe = ServiceXmlUtil.xmlToObject(ServiceOutputXML.outputXML(nodeListProtNFe.item(i)), br.inf.portalfiscal.xsd.nfe.procNFe.TProtNFe.class);
+                } catch (JAXBException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return tProtNFe;
     }
 
     public static void main(String... args) throws Exception {
         Testes testes = new Testes();
         new ServiceVariaveisSistema().getVariaveisSistemaBasica();
 
-        TEnviNFe tEnviNFe = testes.gerarNovaNFe();
+        testes.loadCertificates = new ServiceLoadCertificates();
+        testes.loadCertificates.loadToken();
+        testes.loadCertificates.loadSocketDinamico();
 
-        String strEnviNFe = ServiceXmlUtil.objectToXml(tEnviNFe);
+        String strEnviNFe = testes.gerarNovaNFe();
 
-        System.out.printf("strEnviNFe: \n\n%s\n\n\n", strEnviNFe);
+        String strEnviNFeAssinado = testes.assinarXmlNFe(strEnviNFe);
 
-        ServiceLoadCertificates loadCertificates = new ServiceLoadCertificates();
-        loadCertificates.loadToken();
+        String strAutorizacaoNFe = testes.sefazAtutorizacaoNFe(strEnviNFeAssinado);
 
-        ServiceAssinarXml serviceAssinarXml = new ServiceAssinarXml(strEnviNFe, loadCertificates);
-        String strEnviNFeAssinado = serviceAssinarXml.outputXML();
+        String strRetAutorizacaoNFe = testes.sefazRetAutorizacaoNFe(strAutorizacaoNFe);
+//        String strRetAutorizacaoNFe = testes.sefazRetAutorizacaoNFe("130000147476880");
 
-        System.out.printf("strEnviNFeAssinado: \n\n%s\n\n\n", strEnviNFeAssinado);
-
+        testes.sefazProcNFe(strEnviNFeAssinado, strRetAutorizacaoNFe);
+//        testes.sefazProcNFe("", strRetAutorizacaoNFe);
 
 //        ServiceLoadCertificates loadCertificates = new ServiceLoadCertificates();
 //        loadCertificates.loadToken();
@@ -148,11 +346,6 @@ public class Testes {
 //            }
 //        }
 
-
-        /**
-         * Xml de Consulta.
-         */
-
 //        TConsStatServ consStatServ = new TConsStatServ();
 //        consStatServ.setTpAmb("2");
 //        consStatServ.setCUF("13");
@@ -166,32 +359,6 @@ public class Testes {
 //        }
 //        //String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><consStatServ versao=\"4.00\" xmlns=\"http://www.portalfiscal.inf.br/nfe\"><tpAmb>2</tpAmb><cUF>35</cUF><xServ>STATUS</xServ></consStatServ>";//objectToXml(consStatServ);
 
-//        OMElement ome = null;
-//        try {
-//            ome = AXIOMUtil.stringToOM(xmlNFeAssinado);
-//        } catch (XMLStreamException e) {
-//            e.printStackTrace();
-//        }
-//
-//
-//        NfeAutorizacao4Stub.NfeDadosMsg dadosMsg = new NfeAutorizacao4Stub.NfeDadosMsg();
-//        dadosMsg.setExtraElement(ome);
-//
-//        NfeAutorizacao4Stub stub = null;
-//        try {
-//            stub = new NfeAutorizacao4Stub();
-//        } catch (AxisFault axisFault) {
-//            axisFault.printStackTrace();
-//        }
-//        NfeAutorizacao4Stub.NfeResultMsg result = null;
-//        try {
-//            result = stub.nfeAutorizacaoLote(dadosMsg);
-//        } catch (RemoteException e) {
-//            e.printStackTrace();
-//        }
-//
-//        System.out.println(result.getExtraElement().toString());
-//
 
         /**
          *

@@ -83,7 +83,7 @@ public class Nfe {
          * Código da UF do emitente do Documento Fiscal.
          * Utilizar a Tabela do IBGE de código de unidades da federação (Anexo IX - Tabela de UF, Município e País).
          */
-        ide.setCUF(String.valueOf(TCONFIG.getNfe().getCUF()));
+        ide.setCUF(String.valueOf(TCONFIG.getInfLoja().getCUF()));
 
         /**Código Numérico que compõe a Chave de Acesso
          * Código numérico que compõe a Chave de Acesso.
@@ -154,7 +154,7 @@ public class Nfe {
          * Informar o município de ocorrência do fato gerador do ICMS.
          * Utilizar a Tabela do IBGE (Anexo IX - Tabela de UF, Município e País)
          */
-        ide.setCMunFG(String.valueOf(TCONFIG.getNfe().getCMunFG()));   //Código do Município de Ocorrência do Fato Gerador
+        ide.setCMunFG(String.valueOf(TCONFIG.getInfLoja().getCMunFG()));   //Código do Município de Ocorrência do Fato Gerador
 
         /**Formato de Impressão do DANFE
          * 0=Sem geração de DANFE;
@@ -468,6 +468,8 @@ public class Nfe {
 
         infNFe.setInfAdic(getNewInfAdic());
 
+        infNFe.setInfRespTec(getNewInfRespTec());
+
         //return infNFe;
     }
 
@@ -528,8 +530,7 @@ public class Nfe {
          */
         dest.setIndIEDest(!getSaidaProduto().getCliente().getIe().equals("")
                 ? "1"
-                : (getSaidaProduto().getCliente().isIeIsento())
-                ? "2" : "9");
+                : "9");
 
         /**Inscrição Estadual do Destinatário
          * Campo opcional. Informar somente os algarismos, sem os caracteres de formatação (ponto, barra, hífen, etc.).
@@ -1764,7 +1765,7 @@ public class Nfe {
 
         /**Número da Parcela
          */
-        dup.setNDup(String.format("001 - [%s]", getSaidaProduto().getNfe().getCobrancaNumero()));
+        dup.setNDup("001");
 
         /**Data de vencimento
          */
@@ -1839,6 +1840,42 @@ public class Nfe {
             return infAdic;
         }
         return null;
+    }
+
+    /**
+     * Grupo ZD. Informações do Responsável Técnico
+     *
+     * @return
+     */
+    private TInfRespTec getNewInfRespTec() {
+        /**
+         * Grupo para informações do responsável técnico pelo sistema de emissão do DF-e
+         */
+        TInfRespTec tInfRespTec = new TInfRespTec();
+
+        /**CNPJ da pessoa jurídica responsável pelo sistema utilizado na emissão do documento fiscal eletrônico
+         * Informar o CNPJ da pessoa jurídica responsável pelo sistema utilizado na emissão do documento fiscal eletrônico.
+         */
+        tInfRespTec.setCNPJ(TCONFIG.getNfe().getInfRespTec().getCnpj());
+
+        /**Nome da pessoa a ser contatada
+         * Informar o nome da pessoa a ser contatada na empresa desenvolvedora do sistema utilizado na emissão do
+         * documento fiscal eletrônico.
+         */
+        tInfRespTec.setXContato(TCONFIG.getNfe().getInfRespTec().getXContato());
+
+        /**E-mail da pessoa jurídica a ser contatada
+         * Informar o e-mail da pessoa a ser contatada na empresa desenvolvedora do sistema.
+         */
+        tInfRespTec.setEmail(TCONFIG.getNfe().getInfRespTec().getEmail());
+
+        /**Telefone da pessoa jurídica/física a ser contatada
+         * Informar o telefone da pessoa a ser contatada na empresa desenvolvedora do sistema.
+         * Preencher com o Código DDD + número do telefone.
+         */
+        tInfRespTec.setFone(TCONFIG.getNfe().getInfRespTec().getFone());
+
+        return tInfRespTec;
     }
 
     private static String strValueOf(TEnviNFe tEnviNFe) throws JAXBException {

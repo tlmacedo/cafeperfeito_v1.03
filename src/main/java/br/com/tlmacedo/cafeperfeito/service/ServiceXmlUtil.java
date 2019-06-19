@@ -1,8 +1,11 @@
 package br.com.tlmacedo.cafeperfeito.service;
 
+import br.inf.portalfiscal.xsd.nfe.consReciNFe.TConsReciNFe;
+import br.inf.portalfiscal.xsd.nfe.consStatServ.TConsStatServ;
 import br.inf.portalfiscal.xsd.nfe.enviNFe.TEnviNFe;
 import br.inf.portalfiscal.xsd.nfe.enviNFe.TNFe;
 import br.inf.portalfiscal.xsd.nfe.procNFe.TNfeProc;
+import br.inf.portalfiscal.xsd.nfe.retConsReciNFe.TRetConsReciNFe;
 import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.XMLSerializer;
 import org.w3c.dom.Document;
@@ -33,6 +36,7 @@ public class ServiceXmlUtil {
     private static final String TPROCINUT = "TProcInutNFe";
     private static final String RETORNO_ENVIO = "TRetEnviNFe";
     private static final String SITUACAO_NFE_RET = "TRetConsSitNFe";
+    private static final String TRETCONSRECINFE = "TRetConsReciNFe";
 
     private static final String CTE = "TCTe";
     private static final String CTEPROC = "CteProc";
@@ -73,10 +77,10 @@ public class ServiceXmlUtil {
 //                element = new br.com.tlmacedo.cafeperfeito.xsd.configSistema.informacaoBasica.ObjectFactory().createConfigSidtmCafe((TInformacaoBasica) obj);
 //                break;
 
-//            case STATUS:
-//                context = JAXBContext.newInstance(TConsStatServ.class);
-//                element = new br.inf.portalfiscal.xsd.nfe.consStatServ.ObjectFactory().createConsStatServ((TConsStatServ) obj);
-//                break;
+            case STATUS:
+                context = JAXBContext.newInstance(TConsStatServ.class);
+                element = new br.inf.portalfiscal.xsd.nfe.consStatServ.ObjectFactory().createConsStatServ((TConsStatServ) obj);
+                break;
 
             case TNFE:
                 context = JAXBContext.newInstance(TNFe.class);
@@ -84,11 +88,19 @@ public class ServiceXmlUtil {
                 break;
             case NFEPROC:
                 context = JAXBContext.newInstance(TNfeProc.class);
-                element = new br.inf.portalfiscal.xsd.nfe.procNFe.ObjectFactory().createNfeProc((TNfeProc) obj);
+                element = new br.inf.portalfiscal.xsd.nfe.procNFe.ObjectFactory().createNfeProc((br.inf.portalfiscal.xsd.nfe.procNFe.TNfeProc) obj);
                 break;
             case TENVINFE:
                 context = JAXBContext.newInstance(TEnviNFe.class);
                 element = new br.inf.portalfiscal.xsd.nfe.enviNFe.ObjectFactory().createEnviNFe((TEnviNFe) obj);
+                break;
+            case TCONSRECINFE:
+                context = JAXBContext.newInstance(TConsReciNFe.class);
+                element = new br.inf.portalfiscal.xsd.nfe.consReciNFe.ObjectFactory().createConsReciNFe((TConsReciNFe) obj);
+                break;
+            case TRETCONSRECINFE:
+                context = JAXBContext.newInstance(TRetConsReciNFe.class);
+                element = new br.inf.portalfiscal.xsd.nfe.retConsReciNFe.ObjectFactory().createRetConsReciNFe((TRetConsReciNFe) obj);
                 break;
 
 //            case RECIBO:

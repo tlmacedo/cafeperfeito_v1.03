@@ -29,10 +29,13 @@
     </sis>
     <infLoja>
         <id>1</id>
+        <cnpj>08009246000136</cnpj>
         <titulo>Café Perfeito</titulo>
         <copyright>Café Perfeito ©</copyright>
         <uf>AM</uf>
+        <cUF>13</cUF>
         <municipio>Manaus</municipio>
+        <cMunFG>1302603</cMunFG>
         <ddd>92</ddd>
         <imageDefaultProduto>
             <width>250</width>
@@ -58,37 +61,35 @@
         </splash-imagens>
     </personalizacao>
     <nfe>
-        <certificadoCfg>/certificado/tokenSafeNet5100.cfg</certificadoCfg>
-        <certificadoCacerts>/certificado/NFeCacerts</certificadoCacerts>
-        <cnpj>08009246000136</cnpj>
+        <certificadoCfg>/src/main/resources/certificado/tokenSafeNet5100.cfg</certificadoCfg>
+        <certificadoCacerts>/src/main/resources/certificado/NFeCacerts</certificadoCacerts>
         <portaSSl>443</portaSSl>
         <versao>4.00</versao>
         <indSinc>0</indSinc>
-        <cUF>13</cUF>
         <tpNF>1</tpNF>
-        <cMunFG>1302603</cMunFG>
         <tpImp>1</tpImp>
         <tpEmis>1</tpEmis>
         <tpAmb>2</tpAmb>
         <finNFe>1</finNFe>
         <procEmi>0</procEmi>
-        <verProc>5.1.2</verProc>
+        <verProc>v1.03</verProc>
+        <infRespTec>
+            <cnpj>08009246000136</cnpj>
+            <xContato>THIAGO LEIROS MACEDO</xContato>
+            <email>tl.macedo@hotmail.com</email>
+            <fone>92981686148</fone>
+        </infRespTec>
     </nfe>
     <paths>
-        <pathSalvarArquivo>/Volumes/150GB-Development/cafeperfeito/cafeperfeito_v1.03/src/main/resources
-        </pathSalvarArquivo>
+        <pathSalvarArquivo>/src/main/resources</pathSalvarArquivo>
         <pathIconeSistema>/image/ico/principal/</pathIconeSistema>
         <pathStyleSheets>/style/</pathStyleSheets>
         <pathFXML>/fxml/</pathFXML>
         <pathDownloadImage>/volumes/macOS/Usuários/thiagomacedo/Imagens/cafeperfeito/</pathDownloadImage>
-        <pathNFeSaveXmlOut>/Volumes/150GB-Development/cafeperfeito/cafeperfeito_v1.03/src/main/resources/xml/nfe/out/
-        </pathNFeSaveXmlOut>
-        <pathNFeSaveXmlIn>/Volumes/150GB-Development/cafeperfeito/cafeperfeito_v1.03/src/main/resources/xml/nfe/in/
-        </pathNFeSaveXmlIn>
-        <pathCTeSaveXmlOut>/Volumes/150GB-Development/cafeperfeito/cafeperfeito_v1.03/src/main/resources/xml/cte/out/
-        </pathCTeSaveXmlOut>
-        <pathCTeSaveXmlIn>/Volumes/150GB-Development/cafeperfeito/cafeperfeito_v1.03/src/main/resources/xml/cte/in/
-        </pathCTeSaveXmlIn>
+        <pathNFeSaveXmlOut>/src/main/resources/xml/nfe/out/</pathNFeSaveXmlOut>
+        <pathNFeSaveXmlIn>/src/main/resources/xml/nfe/in/</pathNFeSaveXmlIn>
+        <pathCTeSaveXmlOut>/src/main/resources/xml/cte/out/</pathCTeSaveXmlOut>
+        <pathCTeSaveXmlIn>/src/main/resources/xml/cte/in/</pathCTeSaveXmlIn>
         <pathNFeGetXmlOut>/xml/nfe/out/</pathNFeGetXmlOut>
         <pathNFeGetXmlIn>/xml/nfe/in/</pathNFeGetXmlIn>
         <pathCTeGetXmlOut>/xml/cte/out/</pathCTeGetXmlOut>
