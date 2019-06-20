@@ -3,21 +3,18 @@ package br.com.tlmacedo.cafeperfeito.service;
 import br.com.tlmacedo.cafeperfeito.model.vo.enums.CriteriosValidationFields;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXTextField;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.Node;
-import javafx.scene.control.Tooltip;
-import javafx.util.Duration;
 
-import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import static br.com.tlmacedo.cafeperfeito.model.vo.enums.CriteriosValidationFields.*;
+
+//import javafx.scene.control.Tooltip;
 
 /**
  * Created by IntelliJ IDEA.
@@ -29,7 +26,7 @@ import static br.com.tlmacedo.cafeperfeito.model.vo.enums.CriteriosValidationFie
 public class ServiceValidationFields {
 
     private final String STILE_BORDER_VALIDATION = "-fx-background-color: rgba(255,102,0,0.4)";
-    private final Tooltip toolTip = new Tooltip("Este campo está inválido!!!");
+    //    private final Tooltip toolTip = new Tooltip("Este campo está inválido!!!");
     private HashMap<CriteriosValidationFields, String> hashMap;
     private boolean fieldEditable;
     private int erros = 0;
@@ -38,8 +35,8 @@ public class ServiceValidationFields {
     private BooleanProperty isValido = new SimpleBooleanProperty(false);
 
     public ServiceValidationFields() {
-        toolTip.setStyle("-fx-background-color: linear-gradient(#FF6B6B , #FFA6A6 );"
-                + " -fx-font-weight: bold;");
+//        toolTip.setStyle("-fx-background-color: linear-gradient(#FF6B6B , #FFA6A6 );"
+//                + " -fx-font-weight: bold;");
     }
 
     /**
@@ -71,7 +68,7 @@ public class ServiceValidationFields {
                 if (getCampo() instanceof JFXComboBox)
                     ((JFXComboBox) getCampo()).getSelectionModel().selectedIndexProperty().addListener((ov1, o1, n1) -> analisaErrors());
             } else {
-                removeToolTipAndBorderColor(getCampo(), toolTip);
+                removeToolTipAndBorderColor(getCampo());
             }
         });
     }
@@ -101,25 +98,23 @@ public class ServiceValidationFields {
                         break;
                 }
         }
-        if (getErros() > 0) {
-            hackTooltipStartTiming(toolTip);
-            addToolTipAndBorderColor(getCampo(), toolTip);
-        } else {
-            removeToolTipAndBorderColor(getCampo(), toolTip);
-        }
+        if (getErros() > 0)
+            addToolTipAndBorderColor(getCampo());
+        else
+            removeToolTipAndBorderColor(getCampo());
+
     }
 
     /**
      * *******ADD AND REMOVE STYLES********
      */
-    private void addToolTipAndBorderColor(Node n, Tooltip t) {
-        Tooltip.install(n, t);
+    private void addToolTipAndBorderColor(Node n) {
+//        Tooltip.install(n, t);
         n.setStyle(STILE_BORDER_VALIDATION);
         setIsValido(false);
     }
 
-    private void removeToolTipAndBorderColor(Node n, Tooltip t) {
-        Tooltip.uninstall(n, t);
+    private void removeToolTipAndBorderColor(Node n) {
         n.setStyle(null);
         setIsValido(true);
     }
@@ -127,22 +122,22 @@ public class ServiceValidationFields {
     /**
      * ***********FORCE TOOL TIP TO BE DISPLAYED FASTER************
      */
-    private void hackTooltipStartTiming(Tooltip tooltip) {
-        try {
-            Field fieldBehavior = tooltip.getClass().getDeclaredField("BEHAVIOR");
-            fieldBehavior.setAccessible(true);
-            Object objBehavior = fieldBehavior.get(tooltip);
-
-            Field fieldTimer = objBehavior.getClass().getDeclaredField("activationTimer");
-            fieldTimer.setAccessible(true);
-            Timeline objTimer = (Timeline) fieldTimer.get(objBehavior);
-
-            objTimer.getKeyFrames().clear();
-            objTimer.getKeyFrames().add(new KeyFrame(new Duration(5000)));
-        } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
-            System.out.println(e);
-        }
-    }
+//    private void hackTooltipStartTiming(Tooltip tooltip) {
+//        try {
+//            Field fieldBehavior = tooltip.getClass().getDeclaredField("BEHAVIOR");
+//            fieldBehavior.setAccessible(true);
+//            Object objBehavior = fieldBehavior.get(tooltip);
+//
+//            Field fieldTimer = objBehavior.getClass().getDeclaredField("activationTimer");
+//            fieldTimer.setAccessible(true);
+//            Timeline objTimer = (Timeline) fieldTimer.get(objBehavior);
+//
+//            objTimer.getKeyFrames().clear();
+//            objTimer.getKeyFrames().add(new KeyFrame(new Duration(5000)));
+//        } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
+//            System.out.println(e);
+//        }
+//    }
 
     public HashMap<CriteriosValidationFields, String> getHashMap() {
         return hashMap;

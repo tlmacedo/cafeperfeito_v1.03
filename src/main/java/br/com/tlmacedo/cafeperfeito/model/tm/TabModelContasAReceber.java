@@ -338,8 +338,8 @@ public class TabModelContasAReceber {
                 if (dtpPesq1.getValue() == null || dtpPesq2.getValue() == null)
                     return true;
                 if (chkDtVenda.isSelected()) {
-                    if (contasAReceber.getSaidaProduto().dataCadastroProperty().get().toLocalDate().compareTo(dtpPesq1.getValue()) < 0
-                            || contasAReceber.getSaidaProduto().dataCadastroProperty().get().toLocalDate().compareTo(dtpPesq2.getValue()) > 0)
+                    if (contasAReceber.getSaidaProduto().dtCadastroProperty().get().toLocalDate().compareTo(dtpPesq1.getValue()) < 0
+                            || contasAReceber.getSaidaProduto().dtCadastroProperty().get().toLocalDate().compareTo(dtpPesq2.getValue()) > 0)
                         return false;
                 } else {
                     if (contasAReceber.dtVencimentoProperty().get().compareTo(dtpPesq1.getValue()) < 0

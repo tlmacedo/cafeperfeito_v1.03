@@ -51,8 +51,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static br.com.tlmacedo.cafeperfeito.interfaces.Convert_Date_Key.*;
-import static br.com.tlmacedo.cafeperfeito.model.vo.enums.CriteriosValidationFields.MIN_CBO;
-import static br.com.tlmacedo.cafeperfeito.model.vo.enums.CriteriosValidationFields.MIN_SIZE;
+import static br.com.tlmacedo.cafeperfeito.model.vo.enums.CriteriosValidationFields.*;
 
 public class ControllerCadastroProduto implements Initializable, ModeloCafePerfeito {
 
@@ -93,7 +92,7 @@ public class ControllerCadastroProduto implements Initializable, ModeloCafePerfe
     public JFXComboBox<FiscalPisCofins> cboFiscalPis;
     public JFXComboBox<FiscalPisCofins> cboFiscalCofins;
     public Circle imgCirculo;
-    public TextField txtTeste;
+
     boolean tabCarregada = false;
     StringProperty stpDtCad = new SimpleStringProperty("");
     StringProperty stpDtCadDiff = new SimpleStringProperty("");
@@ -101,7 +100,7 @@ public class ControllerCadastroProduto implements Initializable, ModeloCafePerfe
     StringProperty stpDtAtualizDiff = new SimpleStringProperty("");
     private ServiceAlertMensagem alertMensagem;
     private EventHandler eventHandlerCadastroProduto;
-    private ObjectProperty<StatusBarProduto> statusBar = new SimpleObjectProperty<>();
+    private ObjectProperty<StatusBarProduto> statusBar = new SimpleObjectProperty<>(StatusBarProduto.PESQUISA);
     private String nomeController = "cadastroProduto";
     private String nomeTab = "";
     private List<Pair> listaTarefa = new ArrayList<>();
@@ -147,8 +146,6 @@ public class ControllerCadastroProduto implements Initializable, ModeloCafePerfe
     @Override
     public void escutarTecla() {
 
-        if (statusBarProperty().get() == null)
-            setStatusBar(StatusBarProduto.PESQUISA);
         ControllerPrincipal.ctrlPrincipal.getServiceStatusBar().atualizaStatusBar(statusBarProperty().get().getDescricao());
 
         getLblStatus().textProperty().bind(Bindings.createStringBinding(() -> {
@@ -201,8 +198,12 @@ public class ControllerCadastroProduto implements Initializable, ModeloCafePerfe
 
         ControllerPrincipal.ctrlPrincipal.tabPaneViewPrincipal.getSelectionModel().selectedItemProperty().addListener((ov, o, n) -> {
             if (ControllerPrincipal.ctrlPrincipal.tabPaneViewPrincipal.getTabs().size() == 0) return;
-            if (ControllerPrincipal.ctrlPrincipal.getTabSelecionada().equals(getNomeTab()))
+            if (ControllerPrincipal.ctrlPrincipal.getTabSelecionada().equals(getNomeTab())) {
                 ControllerPrincipal.ctrlPrincipal.getServiceStatusBar().atualizaStatusBar(getStatusBar().getDescricao());
+                ControllerPrincipal.ctrlPrincipal.painelViewPrincipal.addEventHandler(KeyEvent.KEY_PRESSED, getEventHandlerCadastroProduto());
+            } else {
+                ControllerPrincipal.ctrlPrincipal.painelViewPrincipal.removeEventHandler(KeyEvent.KEY_PRESSED, getEventHandlerCadastroProduto());
+            }
         });
 
         setEventHandlerCadastroProduto(new EventHandler<KeyEvent>() {
@@ -803,12 +804,14 @@ public class ControllerCadastroProduto implements Initializable, ModeloCafePerfe
         getTxtCodigoValid.checkFields(
                 getTxtCodigo(),
                 String.format("%s::%d;",
-                        MIN_SIZE, 3));
+                        MIN_SIZE, 3)
+        );
         ServiceValidationFields getTxtDescricaoValid = new ServiceValidationFields();
         getTxtDescricaoValid.checkFields(
                 getTxtDescricao(),
                 String.format("%s::%d;",
-                        MIN_SIZE, 3));
+                        MIN_SIZE, 3)
+        );
 
         ServiceValidationFields getCboSituacaoSistemaValid = new ServiceValidationFields();
         getCboSituacaoSistemaValid.checkFields(
@@ -817,13 +820,21 @@ public class ControllerCadastroProduto implements Initializable, ModeloCafePerfe
                         MIN_CBO, 1)
         );
 
+        ServiceValidationFields getTxtLucroLiquidoValid = new ServiceValidationFields();
+        getTxtLucroLiquidoValid.checkFields(
+                getTxtLucroLiquido(),
+                String.format("%s::%s;",
+                        MIN_BIG, "0.01")
+        );
+
 
         isValidoProperty().bind(Bindings.createBooleanBinding(() ->
                         (getTxtCodigoValid.isValidoProperty().get()
                                 && getTxtDescricaoValid.isValidoProperty().get()
                                 && getCboSituacaoSistemaValid.isValidoProperty().get()
+                                && getTxtLucroLiquidoValid.isValidoProperty().get()
                         ), getTxtCodigoValid.isValidoProperty(), getTxtDescricaoValid.isValidoProperty(),
-                getCboSituacaoSistemaValid.isValidoProperty()
+                getCboSituacaoSistemaValid.isValidoProperty(), getTxtLucroLiquidoValid.isValidoProperty()
         ));
 
 

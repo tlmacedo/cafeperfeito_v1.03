@@ -197,7 +197,7 @@
                             </tooltip>
                         </JFXTextField>
                         <Label fx:id="lblDataCadastro"
-                               accessibleText="len::;type::;value::data de cadastro:;seteditable::;"
+                               accessibleText="len::;type::;value::data de cadastro:;seteditable::;binding::true;"
                                alignment="CENTER_RIGHT" layoutX="1000.0" layoutY="5.0" prefHeight="10.0"
                                prefWidth="335.0" styleClass="lbl-informaçoes" text="DataCadastro" textAlignment="RIGHT">
                             <tooltip>
@@ -205,7 +205,7 @@
                             </tooltip>
                         </Label>
                         <Label fx:id="lblDataCadastroDiff"
-                               accessibleText="len::;type::;value::tempo de cadastro:;seteditable::;"
+                               accessibleText="len::;type::;value::tempo de cadastro:;seteditable::;binding::true;"
                                alignment="CENTER_RIGHT" layoutX="1000.0" layoutY="15.0" prefHeight="10.0"
                                prefWidth="335.0" styleClass="lbl-informacoes" text="DataCadastroDiff"
                                textAlignment="RIGHT">
@@ -214,7 +214,7 @@
                             </tooltip>
                         </Label>
                         <Label fx:id="lblDataAtualizacao"
-                               accessibleText="len::;type::;value::data de atualização:;seteditable::;"
+                               accessibleText="len::;type::;value::data de atualização:;seteditable::;binding::true;"
                                alignment="CENTER_RIGHT" layoutX="1000.0" layoutY="25.0" prefHeight="10.0"
                                prefWidth="335.0" styleClass="lbl-informacoes" text="DataAtualizacao"
                                textAlignment="RIGHT">
@@ -223,7 +223,7 @@
                             </tooltip>
                         </Label>
                         <Label fx:id="lblDataAtualizacaoDiff"
-                               accessibleText="len::;type::;value::tempo de atualização:;seteditable::;"
+                               accessibleText="len::;type::;value::tempo de atualização:;seteditable::;binding::true;"
                                alignment="CENTER_RIGHT" layoutX="1000.0" layoutY="35.0" prefHeight="10.0"
                                prefWidth="335.0" styleClass="lbl-informacoes" text="DataAtualizacaoDiff"
                                textAlignment="RIGHT">

@@ -16,7 +16,7 @@
 
 <AnchorPane fx:id="painelViewSaidaProduto" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0"
             prefHeight="780.0" prefWidth="1350.0" stylesheets="@../style/css/cafeperfeito.css"
-            xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
+            xmlns="http://javafx.com/javafx/10.0.2" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="br.com.tlmacedo.cafeperfeito.controller.ControllerSaidaProduto">
     <children>
         <TitledPane fx:id="tpnDadosSaida" collapsible="false" focusTraversable="false" layoutX="5.0" layoutY="5.0"
@@ -93,7 +93,7 @@
                                             </tooltip>
                                         </JFXDatePicker>
                                         <JFXDatePicker fx:id="dtpSaida"
-                                                       accessibleText="len::;type::;value::;seteditable::;binding::true;"
+                                                       accessibleText="len::;type::;value::now;seteditable::;"
                                                        defaultColor="#ff6600" layoutX="490.0" layoutY="10.0"
                                                        maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
                                                        minWidth="-Infinity" prefHeight="20.0" prefWidth="90.0"
@@ -228,7 +228,7 @@
                                                                                     </tooltip>
                                                                                 </JFXComboBox>
                                                                                 <JFXDatePicker fx:id="dtpNfeEmissao"
-                                                                                               accessibleText="len::;type::;value::;seteditable::;"
+                                                                                               accessibleText="len::;type::;value::now;seteditable::;"
                                                                                                defaultColor="#ff6600"
                                                                                                layoutX="420.0"
                                                                                                layoutY="10.0"
@@ -245,7 +245,7 @@
                                                                                     </tooltip>
                                                                                 </JFXDatePicker>
                                                                                 <JFXTimePicker fx:id="tmpNfeEmissao"
-                                                                                               accessibleText="value::;"
+                                                                                               accessibleText="value::now;"
                                                                                                defaultColor="#ff6600"
                                                                                                editable="true"
                                                                                                layoutX="520.0"
@@ -263,7 +263,7 @@
                                                                                     </tooltip>
                                                                                 </JFXTimePicker>
                                                                                 <JFXDatePicker fx:id="dtpNfeSaida"
-                                                                                               accessibleText="value::;"
+                                                                                               accessibleText="value::now;"
                                                                                                defaultColor="#ff6600"
                                                                                                layoutX="620.0"
                                                                                                layoutY="10.0"
@@ -280,7 +280,7 @@
                                                                                     </tooltip>
                                                                                 </JFXDatePicker>
                                                                                 <JFXTimePicker fx:id="tmpNfeSaida"
-                                                                                               accessibleText="value::;"
+                                                                                               accessibleText="value::now;"
                                                                                                defaultColor="#ff6600"
                                                                                                editable="true"
                                                                                                layoutX="720.0"

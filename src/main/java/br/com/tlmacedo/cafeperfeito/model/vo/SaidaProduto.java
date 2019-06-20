@@ -8,6 +8,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +30,8 @@ public class SaidaProduto {
     private Empresa cliente = new Empresa();
     private Usuario vendedor = new Usuario();
     private SaidaProdutoNfe nfe = new SaidaProdutoNfe();
-    private ObjectProperty<LocalDateTime> dataCadastro = new SimpleObjectProperty<>(LocalDateTime.now());
+    private ObjectProperty<LocalDateTime> dtCadastro = new SimpleObjectProperty<>(LocalDateTime.now());
+    private ObjectProperty<LocalDate> dtSaida = new SimpleObjectProperty<>(LocalDate.now());
     private ContasAReceber contasAReceber;
 
 
@@ -38,10 +40,11 @@ public class SaidaProduto {
     public SaidaProduto() {
     }
 
-    public SaidaProduto(Empresa cliente, Usuario vendedor, LocalDateTime dataCadastro) {
+    public SaidaProduto(Empresa cliente, Usuario vendedor, LocalDateTime dtCadastro, LocalDate dtSaida) {
         this.cliente = cliente;
         this.vendedor = vendedor;
-        this.dataCadastro = new SimpleObjectProperty<>(dataCadastro);
+        this.dtCadastro = new SimpleObjectProperty<>(dtCadastro);
+        this.dtSaida = new SimpleObjectProperty<>(dtSaida);
     }
 
     @Id
@@ -92,16 +95,29 @@ public class SaidaProduto {
 
     @CreationTimestamp
     @Column(nullable = false)
-    public LocalDateTime getDataCadastro() {
-        return dataCadastro.get();
+    public LocalDateTime getDtCadastro() {
+        return dtCadastro.get();
     }
 
-    public void setDataCadastro(LocalDateTime dataCadastro) {
-        this.dataCadastro.set(dataCadastro);
+    public ObjectProperty<LocalDateTime> dtCadastroProperty() {
+        return dtCadastro;
     }
 
-    public ObjectProperty<LocalDateTime> dataCadastroProperty() {
-        return dataCadastro;
+    public void setDtCadastro(LocalDateTime dtCadastro) {
+        this.dtCadastro.set(dtCadastro);
+    }
+
+    @Column(nullable = false)
+    public LocalDate getDtSaida() {
+        return dtSaida.get();
+    }
+
+    public ObjectProperty<LocalDate> dtSaidaProperty() {
+        return dtSaida;
+    }
+
+    public void setDtSaida(LocalDate dtSaida) {
+        this.dtSaida.set(dtSaida);
     }
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
@@ -129,7 +145,10 @@ public class SaidaProduto {
                 "id=" + id +
                 ", cliente=" + cliente +
                 ", vendedor=" + vendedor +
-                ", dataCadastro=" + dataCadastro +
+                ", nfe=" + nfe +
+                ", dtCadastro=" + dtCadastro +
+                ", dtSaida=" + dtSaida +
+                ", contasAReceber=" + contasAReceber +
                 ", saidaProdutoProdutoList=" + saidaProdutoProdutoList +
                 '}';
     }

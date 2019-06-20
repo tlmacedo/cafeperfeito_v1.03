@@ -16,8 +16,8 @@ public class ServiceGerarChaveNfe {
 
     public static String Gerar(SaidaProdutoNfe nfe) {
         String cUF = String.valueOf(TCONFIG.getInfLoja().getCUF());
-        String aAMM = String.format("%02d%02d", nfe.getSaidaProduto().getDataCadastro().getYear() % 100,
-                nfe.getSaidaProduto().getDataCadastro().getMonthValue());
+        String aAMM = String.format("%02d%02d", nfe.getSaidaProduto().getDtCadastro().getYear() % 100,
+                nfe.getSaidaProduto().getDtCadastro().getMonthValue());
         String cnpj = TCONFIG.getInfLoja().getCnpj();
         String mod = String.format("%02d", nfe.getModelo().getCod());
         String serie = String.format("%03d", nfe.getSerie());

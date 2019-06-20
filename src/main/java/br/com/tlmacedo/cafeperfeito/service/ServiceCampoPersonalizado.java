@@ -41,9 +41,6 @@ public class ServiceCampoPersonalizado {
                         if (hashMap.get("binding").equals("true"))
                             continue;
                     if (node instanceof Label)
-//                    if (hashMap.containsKey("binding"))
-//                        if (hashMap.get("binding").equals("true")) ;
-//                        else
                         ((Label) node).setText(vlrInicial);
                     else if (node instanceof JFXTextField)
                         ((JFXTextField) node).setText(vlrInicial);
@@ -58,37 +55,23 @@ public class ServiceCampoPersonalizado {
                     else if (node instanceof ImageView)
                         ((ImageView) node).setImage(null);
 
-                    else if (node instanceof DatePicker)
-                        if (hashMap.containsKey("binding")) {
-                            if (hashMap.get("binding").equals("true")) ;
-                        } else {
-                            if (vlrInicial.equals("")) {
-                                ((DatePicker) node).setValue(LocalDate.now());
-                            } else {
-                                ((DatePicker) node).setValue(LocalDate.parse(vlrInicial));
-                            }
-                        }
-                    else if (node instanceof JFXDatePicker)
-                        if (hashMap.containsKey("binding")) {
-                            if (hashMap.get("binding").equals("true")) ;
-                        } else {
-                            if (vlrInicial.equals("")) {
-                                ((JFXDatePicker) node).setValue(LocalDate.now());
-                            } else {
-                                ((JFXDatePicker) node).setValue(LocalDate.parse(vlrInicial));
-                            }
-                        }
-                    else if (node instanceof JFXTimePicker)
-                        if (hashMap.containsKey("binding")) {
-                            if (hashMap.get("binding").equals("true")) ;
-                        } else {
-                            if (vlrInicial.equals("")) {
-                                ((JFXTimePicker) node).setValue(LocalTime.now());
-                            } else {
-                                ((JFXTimePicker) node).setValue(LocalTime.parse(vlrInicial));
-                            }
-                        }
-                    else if (node instanceof JFXTreeTableView)
+                    else if (node instanceof DatePicker || node instanceof JFXDatePicker) {
+                        LocalDate localDate = null;
+                        if (vlrInicial.equals("now"))
+                            localDate = LocalDate.now();
+                        else //if (vlrInicial.equals(""))
+                            localDate = LocalDate.parse(vlrInicial);
+                        if (node instanceof DatePicker)
+                            ((DatePicker) node).setValue(localDate);
+                        else
+                            ((JFXDatePicker) node).setValue(localDate);
+                    } else if (node instanceof JFXTimePicker) {
+                        LocalTime localTime = null;
+                        if (vlrInicial.equals("now"))
+                            ((JFXTimePicker) node).setValue(LocalTime.now());
+                        else
+                            ((JFXTimePicker) node).setValue(LocalTime.parse(vlrInicial));
+                    } else if (node instanceof JFXTreeTableView)
                         ((JFXTreeTableView) node).getColumns().clear();
                     else if (node instanceof TableView)
                         ((TableView) node).getItems().clear();
@@ -103,6 +86,8 @@ public class ServiceCampoPersonalizado {
                     } else {
                         ex.printStackTrace();
                     }
+                    System.out.printf("node_Errrrrrrr: [%s]\n", node.getId());
+                    ex.printStackTrace();
                 }
             }
             if (node instanceof AnchorPane)
