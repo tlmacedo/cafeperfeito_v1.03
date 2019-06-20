@@ -25,22 +25,22 @@ public class ServiceAutoCompleteTextField {
             jfxTextField.positionCaret(jfxTextField.getLength());
         });
 
-        jfxTextField.focusedProperty().addListener((ov, o, n) -> {
-            if (n) {
-                jfxTextField.textProperty().addListener((ov1, o1, n1) -> {
-                    if (n1.length() > 0) {
-                        autoCompletePopup.filter(item -> item.toLowerCase().contains(jfxTextField.getText().toLowerCase()));
-                        if (autoCompletePopup.getFilteredSuggestions().isEmpty())
-                            autoCompletePopup.hide();
-                        else
-                            autoCompletePopup.show(jfxTextField);
-                    } else {
-                        autoCompletePopup.hide();
-                    }
-                });
+//        jfxTextField.focusedProperty().addListener((ov, o, n) -> {
+//            if (n) {
+        jfxTextField.textProperty().addListener((ov1, o1, n1) -> {
+            if (n1.length() > 0 && jfxTextField.isFocused() && !jfxTextField.isDisabled()) {
+                autoCompletePopup.filter(item -> item.toLowerCase().contains(jfxTextField.getText().toLowerCase()));
+                if (autoCompletePopup.getFilteredSuggestions().isEmpty())
+                    autoCompletePopup.hide();
+                else
+                    autoCompletePopup.show(jfxTextField);
             } else {
                 autoCompletePopup.hide();
             }
         });
+//            } else {
+//                autoCompletePopup.hide();
+//            }
+//        });
     }
 }

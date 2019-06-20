@@ -94,10 +94,10 @@ public class ControllerCadastroProduto implements Initializable, ModeloCafePerfe
     public Circle imgCirculo;
 
     boolean tabCarregada = false;
-    StringProperty stpDtCad = new SimpleStringProperty("");
-    StringProperty stpDtCadDiff = new SimpleStringProperty("");
-    StringProperty stpDtAtualiz = new SimpleStringProperty("");
-    StringProperty stpDtAtualizDiff = new SimpleStringProperty("");
+    private StringProperty stpDtCad = new SimpleStringProperty("");
+    private StringProperty stpDtCadDiff = new SimpleStringProperty("");
+    private StringProperty stpDtAtualiz = new SimpleStringProperty("");
+    private StringProperty stpDtAtualizDiff = new SimpleStringProperty("");
     private ServiceAlertMensagem alertMensagem;
     private EventHandler eventHandlerCadastroProduto;
     private ObjectProperty<StatusBarProduto> statusBar = new SimpleObjectProperty<>(StatusBarProduto.PESQUISA);
@@ -209,10 +209,10 @@ public class ControllerCadastroProduto implements Initializable, ModeloCafePerfe
         setEventHandlerCadastroProduto(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
-                if (ControllerPrincipal.ctrlPrincipal.tabPaneViewPrincipal.getSelectionModel().getSelectedIndex() < 0)
-                    return;
-                if (!ControllerPrincipal.ctrlPrincipal.tabPaneViewPrincipal.getSelectionModel().getSelectedItem().getText().equals(ViewCadastroProduto.getTituloJanela()))
-                    return;
+//                if (ControllerPrincipal.ctrlPrincipal.tabPaneViewPrincipal.getSelectionModel().getSelectedIndex() < 0)
+//                    return;
+//                if (!ControllerPrincipal.ctrlPrincipal.tabPaneViewPrincipal.getSelectionModel().getSelectedItem().getText().equals(ViewCadastroProduto.getTituloJanela()))
+//                    return;
                 switch (event.getCode()) {
                     case F1:
                         if (!teclaFuncaoDisponivel(event.getCode())) return;
@@ -290,9 +290,19 @@ public class ControllerCadastroProduto implements Initializable, ModeloCafePerfe
                             addCodeBar("");
                         break;
                     case N:
-                        if (getStatusBar().equals(StatusBarProduto.PESQUISA) || !txtCodigo.isFocused()) return;
+                        if (getStatusBar().equals(StatusBarProduto.PESQUISA)) return;
                         if (CODE_KEY_CTRL_ALT_N.match(event) || CHAR_KEY_CTRL_ALT_N.match(event))
-                            geraNovoCodigo();
+                            if (getTxtFiscalGenero().getText().equals("")
+                                    || getTxtFiscalGenero().getText().equals("00")) {
+                                setAlertMensagem(new ServiceAlertMensagem());
+                                getAlertMensagem().setCabecalho("campo inválido");
+                                getAlertMensagem().setPromptText("gênero do produto é inválido!");
+                                getAlertMensagem().getRetornoAlert_OK();
+                                getTxtFiscalGenero().requestFocus();
+                                return;
+                            } else {
+                                geraNovoCodigo();
+                            }
                         break;
                     case Z:
                         if (getStatusBar().equals(StatusBarProduto.PESQUISA)) return;
@@ -827,14 +837,60 @@ public class ControllerCadastroProduto implements Initializable, ModeloCafePerfe
                         MIN_BIG, "0.01")
         );
 
+        ServiceValidationFields getTxtFiscalNcmValid = new ServiceValidationFields();
+        getTxtFiscalNcmValid.checkFields(
+                getTxtFiscalNcm(),
+                String.format("%s::%d;",
+                        MIN_SIZE, 4)
+        );
+
+        ServiceValidationFields getTxtFiscalCestValid = new ServiceValidationFields();
+        getTxtFiscalCestValid.checkFields(
+                getTxtFiscalCest(),
+                String.format("%s::%d;",
+                        MIN_SIZE, 4)
+        );
+
+        ServiceValidationFields getCboFiscalCstOrigemValid = new ServiceValidationFields();
+        getCboFiscalCstOrigemValid.checkFields(
+                getCboFiscalCstOrigem(),
+                String.format("%s::%d;",
+                        MIN_CBO, 1)
+        );
+
+        ServiceValidationFields getCboFiscalIcmsValid = new ServiceValidationFields();
+        getCboFiscalIcmsValid.checkFields(
+                getCboFiscalIcms(),
+                String.format("%s::%d;",
+                        MIN_CBO, 1)
+        );
+
+        ServiceValidationFields getCboFiscalPisValid = new ServiceValidationFields();
+        getCboFiscalPisValid.checkFields(
+                getCboFiscalPis(),
+                String.format("%s::%d;",
+                        MIN_CBO, 1)
+        );
+
+        ServiceValidationFields getCboFiscalCofinsValid = new ServiceValidationFields();
+        getCboFiscalCofinsValid.checkFields(
+                getCboFiscalCofins(),
+                String.format("%s::%d;",
+                        MIN_CBO, 1)
+        );
 
         isValidoProperty().bind(Bindings.createBooleanBinding(() ->
                         (getTxtCodigoValid.isValidoProperty().get()
                                 && getTxtDescricaoValid.isValidoProperty().get()
                                 && getCboSituacaoSistemaValid.isValidoProperty().get()
                                 && getTxtLucroLiquidoValid.isValidoProperty().get()
+                                && getTxtFiscalNcmValid.isValidoProperty().get()
+                                && getTxtFiscalCestValid.isValidoProperty().get()
                         ), getTxtCodigoValid.isValidoProperty(), getTxtDescricaoValid.isValidoProperty(),
-                getCboSituacaoSistemaValid.isValidoProperty(), getTxtLucroLiquidoValid.isValidoProperty()
+                getCboSituacaoSistemaValid.isValidoProperty(), getTxtLucroLiquidoValid.isValidoProperty(),
+                getTxtFiscalNcmValid.isValidoProperty(), getTxtFiscalCestValid.isValidoProperty(),
+                getCboFiscalCstOrigemValid.isValidoProperty(), getCboFiscalIcmsValid.isValidoProperty(),
+                getCboFiscalPisValid.isValidoProperty(), getCboFiscalCofinsValid.isValidoProperty()
         ));
 
 

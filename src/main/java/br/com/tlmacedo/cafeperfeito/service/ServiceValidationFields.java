@@ -61,14 +61,14 @@ public class ServiceValidationFields {
 
         setHashMap(ServiceMascara.getHasMapCriteriosValidationFields(criterios));
         getCampo().disableProperty().addListener((ov, o, n) -> {
-            if (!n || !isFieldEditable()) {
+            if (n || !isFieldEditable()) {
+                removeToolTipAndBorderColor(getCampo());
+            } else {
                 analisaErrors();
                 if (getCampo() instanceof JFXTextField)
                     ((JFXTextField) getCampo()).textProperty().addListener((ov1, o1, n1) -> analisaErrors());
                 if (getCampo() instanceof JFXComboBox)
                     ((JFXComboBox) getCampo()).getSelectionModel().selectedIndexProperty().addListener((ov1, o1, n1) -> analisaErrors());
-            } else {
-                removeToolTipAndBorderColor(getCampo());
             }
         });
     }
@@ -76,27 +76,33 @@ public class ServiceValidationFields {
     private void analisaErrors() {
         setErros(0);
         for (CriteriosValidationFields criteria : getHashMap().keySet()) {
-            if (getCampo() instanceof JFXTextField)
-                switch (criteria) {
-                    case MIN_SIZE:
-                        if (((JFXTextField) getCampo()).getLength() < Integer.valueOf(getHashMap().get(MIN_SIZE)))
-                            setErros(getErros() + 1);
-                        break;
-                    case MIN_BIG:
-                        if (ServiceMascara.getBigDecimalFromTextField(((JFXTextField) getCampo()).getText(),
-                                (((JFXTextField) getCampo()).getText().replaceAll("\\D", "").length()
-                                        - ((JFXTextField) getCampo()).getText().lastIndexOf(","))
-                        ).compareTo(new BigDecimal(getHashMap().get(MIN_BIG))) < 0)
-                            setErros(getErros() + 1);
-                        break;
-                }
-            if (getCampo() instanceof JFXComboBox)
-                switch (criteria) {
-                    case MIN_CBO:
-                        if (((JFXComboBox) getCampo()).getSelectionModel().getSelectedIndex() < Integer.valueOf(getHashMap().get(MIN_CBO)))
-                            setErros(getErros() + 1);
-                        break;
-                }
+            if (!getCampo().isDisabled()) {
+                if (getCampo() instanceof JFXTextField)
+                    switch (criteria) {
+                        case VAL_CNPJ:
+                            if (!ServiceValidarDado.isCnpjCpfValido(((JFXTextField) getCampo()).getText()))
+                                setErros(getErros() + 1);
+                            break;
+                        case MIN_SIZE:
+                            if (((JFXTextField) getCampo()).getLength() < Integer.valueOf(getHashMap().get(MIN_SIZE)))
+                                setErros(getErros() + 1);
+                            break;
+                        case MIN_BIG:
+                            if (ServiceMascara.getBigDecimalFromTextField(((JFXTextField) getCampo()).getText(),
+                                    (((JFXTextField) getCampo()).getText().replaceAll("\\D", "").length()
+                                            - ((JFXTextField) getCampo()).getText().lastIndexOf(","))
+                            ).compareTo(new BigDecimal(getHashMap().get(MIN_BIG))) < 0)
+                                setErros(getErros() + 1);
+                            break;
+                    }
+                if (getCampo() instanceof JFXComboBox)
+                    switch (criteria) {
+                        case MIN_CBO:
+                            if (((JFXComboBox) getCampo()).getSelectionModel().getSelectedIndex() < Integer.valueOf(getHashMap().get(MIN_CBO)))
+                                setErros(getErros() + 1);
+                            break;
+                    }
+            }
         }
         if (getErros() > 0)
             addToolTipAndBorderColor(getCampo());
@@ -138,7 +144,6 @@ public class ServiceValidationFields {
 //            System.out.println(e);
 //        }
 //    }
-
     public HashMap<CriteriosValidationFields, String> getHashMap() {
         return hashMap;
     }

@@ -11,7 +11,8 @@ public enum CriteriosValidationFields {
     MIN_SIZE(1, "minSize"),
     MIN_BIG(2, "minBigDecimal"),
     MIN_DATA(3, "minData"),
-    MIN_CBO(4, "minCbo");
+    MIN_CBO(4, "minCbo"),
+    VAL_CNPJ(5, "valCnpj");
 
     private int cod;
     private String descricao;
