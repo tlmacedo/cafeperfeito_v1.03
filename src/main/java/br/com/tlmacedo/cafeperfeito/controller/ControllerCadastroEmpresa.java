@@ -133,7 +133,7 @@ public class ControllerCadastroEmpresa implements Initializable, ModeloCafePerfe
     private StringProperty stpDtAbertDiff = new SimpleStringProperty("");
     private ServiceAlertMensagem alertMensagem;
     private EventHandler eventHandlerCadastroEmpresa;
-    private ObjectProperty<StatusBarEmpresa> statusBar = new SimpleObjectProperty<>();
+    private ObjectProperty<StatusBarEmpresa> statusBar = new SimpleObjectProperty<>(StatusBarEmpresa.PESQUISA);
     private String nomeController = "cadastroEmpresa";
     private List<Pair> listaTarefa = new ArrayList<>();
     private EmpresaDAO empresaDAO = new EmpresaDAO();
@@ -209,8 +209,8 @@ public class ControllerCadastroEmpresa implements Initializable, ModeloCafePerfe
     @Override
     public void escutarTecla() {
 
-        if (statusBarProperty().get() == null)
-            setStatusBar(StatusBarEmpresa.PESQUISA);
+//        if (statusBarProperty().get() == null)
+//            setStatusBar(StatusBarEmpresa.PESQUISA);
         ControllerPrincipal.ctrlPrincipal.getServiceStatusBar().atualizaStatusBar(statusBarProperty().get().getDescricao());
 
         getLblStatus().textProperty().bind(Bindings.createStringBinding(() -> {
@@ -255,8 +255,12 @@ public class ControllerCadastroEmpresa implements Initializable, ModeloCafePerfe
 
         ControllerPrincipal.ctrlPrincipal.tabPaneViewPrincipal.getSelectionModel().selectedItemProperty().addListener((ov, o, n) -> {
             if (ControllerPrincipal.ctrlPrincipal.tabPaneViewPrincipal.getTabs().size() == 0) return;
-            if (ControllerPrincipal.ctrlPrincipal.getTabSelecionada().equals(getNomeTab()))
+            if (ControllerPrincipal.ctrlPrincipal.getTabSelecionada().equals(getNomeTab())) {
+                ControllerPrincipal.ctrlPrincipal.painelViewPrincipal.addEventHandler(KeyEvent.KEY_PRESSED, getEventHandlerCadastroEmpresa());
                 ControllerPrincipal.ctrlPrincipal.getServiceStatusBar().atualizaStatusBar(getStatusBar().getDescricao());
+            } else {
+                ControllerPrincipal.ctrlPrincipal.painelViewPrincipal.removeEventHandler(KeyEvent.KEY_PRESSED, getEventHandlerCadastroEmpresa());
+            }
         });
 
         getListEndereco().setItems(getEnderecoObservableList());
@@ -801,7 +805,7 @@ public class ControllerCadastroEmpresa implements Initializable, ModeloCafePerfe
         setStpDtAtualiz("");
         setStpDtAtualizDiff("");
         ServiceCampoPersonalizado.fieldClear((AnchorPane) getTpnDadoCadastral().getContent());
-        setObjUfPrincipal(new UfDAO().getById(Uf.class, Long.valueOf(TCONFIG.getNfe().getCUF())));
+        setObjUfPrincipal(new UfDAO().getById(Uf.class, Long.valueOf(TCONFIG.getInfLoja().getCUF())));
     }
 
     private void exibirEmpresa() {

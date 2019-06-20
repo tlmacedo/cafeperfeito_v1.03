@@ -1,6 +1,5 @@
 package br.com.tlmacedo.cafeperfeito.nfe;
 
-import br.com.tlmacedo.cafeperfeito.nfe.v400.ServiceLoadCertificates;
 import br.com.tlmacedo.cafeperfeito.service.ServiceVariaveisSistema;
 import br.com.tlmacedo.cafeperfeito.service.ServiceXmlUtil;
 import br.inf.portalfiscal.wsdl.nfe.hom.nfeStatusServico4.NfeStatusServico4Stub;

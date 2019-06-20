@@ -1,4 +1,4 @@
-package br.com.tlmacedo.cafeperfeito.nfe.v400;
+package br.com.tlmacedo.cafeperfeito.nfe;
 
 import br.com.tlmacedo.cafeperfeito.service.ServiceXmlUtil;
 import br.inf.portalfiscal.xsd.nfe.nfe.TNFe;

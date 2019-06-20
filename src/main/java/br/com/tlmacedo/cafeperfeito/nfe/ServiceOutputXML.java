@@ -1,4 +1,4 @@
-package br.com.tlmacedo.cafeperfeito.nfe.v400;
+package br.com.tlmacedo.cafeperfeito.nfe;
 
 import org.w3c.dom.Node;
 

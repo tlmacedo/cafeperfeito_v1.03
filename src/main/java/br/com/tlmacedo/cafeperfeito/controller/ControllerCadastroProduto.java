@@ -9,7 +9,9 @@ import br.com.tlmacedo.cafeperfeito.model.vo.enums.StatusBarProduto;
 import br.com.tlmacedo.cafeperfeito.model.vo.enums.UnidadeComercial;
 import br.com.tlmacedo.cafeperfeito.model.vo.enums.WsCosmosBusca;
 import br.com.tlmacedo.cafeperfeito.model.ws.WsEanCosmoDAO;
+import br.com.tlmacedo.cafeperfeito.service.FormatCell.FormatListCell_FiscalCestNcm;
 import br.com.tlmacedo.cafeperfeito.service.*;
+import br.com.tlmacedo.cafeperfeito.service.FormatCell.FormatListCell_ProdutoCodigoBarra;
 import br.com.tlmacedo.cafeperfeito.view.ViewCadastroProduto;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXListView;
@@ -26,7 +28,6 @@ import javafx.event.EventHandler;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -34,7 +35,6 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
-import javafx.util.Callback;
 import javafx.util.Pair;
 import org.apache.commons.lang3.StringUtils;
 
@@ -139,45 +139,8 @@ public class ControllerCadastroProduto implements Initializable, ModeloCafePerfe
     @SuppressWarnings("Duplicates")
     @Override
     public void fatorarObjetos() {
-        getCboFiscalCestNcm().setCellFactory(new Callback<ListView<FiscalCestNcm>, ListCell<FiscalCestNcm>>() {
-            @Override
-            public ListCell<FiscalCestNcm> call(ListView<FiscalCestNcm> param) {
-                final ListCell<FiscalCestNcm> listCell = new ListCell<FiscalCestNcm>() {
-                    @Override
-                    protected void updateItem(FiscalCestNcm item, boolean empty) {
-                        super.updateItem(item, empty);
-                        if (empty)
-                            setText("");
-                        else
-                            setText(item.getDetalheCestNcm());
-                    }
-                };
-                return listCell;
-            }
-        });
-
-        getCodigoBarraList().setCellFactory(new Callback<ListView<ProdutoCodigoBarra>, ListCell<ProdutoCodigoBarra>>() {
-            @Override
-            public ListCell<ProdutoCodigoBarra> call(ListView<ProdutoCodigoBarra> param) {
-                final ListCell<ProdutoCodigoBarra> listCell = new ListCell<ProdutoCodigoBarra>() {
-                    @Override
-                    protected void updateItem(ProdutoCodigoBarra item, boolean empty) {
-                        super.updateItem(item, empty);
-                        if (empty) {
-                            setGraphic(null);
-                        } else {
-                            try {
-                                setGraphic(new ImageView(item.getImageCodigoBarra()));
-                            } catch (Exception ex) {
-                                ex.printStackTrace();
-                                setGraphic(null);
-                            }
-                        }
-                    }
-                };
-                return listCell;
-            }
-        });
+        getCboFiscalCestNcm().setCellFactory(param -> new FormatListCell_FiscalCestNcm());
+        getCodigoBarraList().setCellFactory(param -> new FormatListCell_ProdutoCodigoBarra());
     }
 
     @SuppressWarnings("Duplicates")

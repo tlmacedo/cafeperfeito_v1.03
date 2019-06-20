@@ -1,12 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.jfoenix.controls.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import com.jfoenix.controls.JFXComboBox?>
+<?import com.jfoenix.controls.JFXDatePicker?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import com.jfoenix.controls.JFXTimePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.control.TreeTableView?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
+
 <AnchorPane fx:id="painelViewSaidaProduto" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0"
             prefHeight="780.0" prefWidth="1350.0" stylesheets="@../style/css/cafeperfeito.css"
-            xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1"
+            xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="br.com.tlmacedo.cafeperfeito.controller.ControllerSaidaProduto">
     <children>
         <TitledPane fx:id="tpnDadosSaida" collapsible="false" focusTraversable="false" layoutX="5.0" layoutY="5.0"
@@ -77,9 +87,19 @@
                                                        defaultColor="#ff6600" layoutX="390.0" layoutY="10.0"
                                                        maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
                                                        minWidth="-Infinity" prefHeight="20.0" prefWidth="90.0"
-                                                       promptText="vencimento">
+                                                       promptText="dt venc.">
                                             <tooltip>
-                                                <Tooltip text="data de entrada da nfe de entrada"/>
+                                                <Tooltip text="data de vencimento da venda"/>
+                                            </tooltip>
+                                        </JFXDatePicker>
+                                        <JFXDatePicker fx:id="dtpSaida"
+                                                       accessibleText="len::;type::;value::;seteditable::;binding::true;"
+                                                       defaultColor="#ff6600" layoutX="490.0" layoutY="10.0"
+                                                       maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+                                                       minWidth="-Infinity" prefHeight="20.0" prefWidth="90.0"
+                                                       promptText="dt saida">
+                                            <tooltip>
+                                                <Tooltip text="data de saida da venda"/>
                                             </tooltip>
                                         </JFXDatePicker>
                                         <!--                                        <JFXTextField fx:id="txtPrazo"-->
@@ -92,33 +112,33 @@
                                         <!--                                                <Tooltip text="valor líquido total do tributo da nfe de entrada"/>-->
                                         <!--                                            </tooltip>-->
                                         <!--                                        </JFXTextField>-->
-                                        <Label fx:id="labelClientePrazo" layoutX="490.0" prefHeight="16.0"
+                                        <Label fx:id="labelClientePrazo" layoutX="590.0" prefHeight="16.0"
                                                prefWidth="90.0" styleClass="label-tab-total-label" text="Prazo"/>
-                                        <Label fx:id="lblClientePrazo" layoutX="490.0" layoutY="13.0" prefHeight="18.0"
+                                        <Label fx:id="lblClientePrazo" layoutX="590.0" layoutY="13.0" prefHeight="18.0"
                                                prefWidth="90.0" styleClass="label-tab-total-valor" text="Prazo">
                                             <tooltip>
                                                 <Tooltip text="prazo para pagamento do cliente"/>
                                             </tooltip>
                                         </Label>
-                                        <Label fx:id="labelClienteLimite" layoutX="590.0" prefHeight="16.0"
+                                        <Label fx:id="labelClienteLimite" layoutX="690.0" prefHeight="16.0"
                                                prefWidth="90.0" styleClass="label-tab-total-label" text="Limite"/>
-                                        <Label fx:id="lblClienteLimite" layoutX="590.0" layoutY="13.0" prefHeight="18.0"
+                                        <Label fx:id="lblClienteLimite" layoutX="690.0" layoutY="13.0" prefHeight="18.0"
                                                prefWidth="90.0" styleClass="label-tab-total-valor" text="Limite">
                                             <tooltip>
                                                 <Tooltip text="limite de crédito do cliente"/>
                                             </tooltip>
                                         </Label>
-                                        <Label fx:id="labelClienteAberto" layoutX="690.0" prefHeight="16.0"
+                                        <Label fx:id="labelClienteAberto" layoutX="790.0" prefHeight="16.0"
                                                prefWidth="90.0" styleClass="label-tab-total-label" text="Utilizado"/>
-                                        <Label fx:id="lblClienteAberto" layoutX="690.0" layoutY="13.0" prefHeight="18.0"
+                                        <Label fx:id="lblClienteAberto" layoutX="790.0" layoutY="13.0" prefHeight="18.0"
                                                prefWidth="90.0" styleClass="label-tab-total-valor" text="Limite">
                                             <tooltip>
                                                 <Tooltip text="valor do limite utilizado"/>
                                             </tooltip>
                                         </Label>
-                                        <Label fx:id="labelClienteDisponivel" layoutX="790.0" prefHeight="16.0"
+                                        <Label fx:id="labelClienteDisponivel" layoutX="890.0" prefHeight="16.0"
                                                prefWidth="90.0" styleClass="label-tab-total-label" text="Disponível"/>
-                                        <Label fx:id="lblClienteDisponivel" layoutX="790.0" layoutY="13.0"
+                                        <Label fx:id="lblClienteDisponivel" layoutX="890.0" layoutY="13.0"
                                                prefHeight="18.0" prefWidth="90.0" styleClass="label-tab-total-valor"
                                                text="Limite">
                                             <tooltip>

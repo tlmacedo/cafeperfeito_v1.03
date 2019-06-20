@@ -7,7 +7,7 @@ import br.com.tlmacedo.cafeperfeito.model.tm.TabModelSaidaProdutoProduto;
 import br.com.tlmacedo.cafeperfeito.model.vo.*;
 import br.com.tlmacedo.cafeperfeito.model.vo.enums.*;
 import br.com.tlmacedo.cafeperfeito.nfe.v400.Nfe;
-import br.com.tlmacedo.cafeperfeito.nfe.v400.ServiceGerarChaveNfe;
+import br.com.tlmacedo.cafeperfeito.nfe.ServiceGerarChaveNfe;
 import br.com.tlmacedo.cafeperfeito.service.*;
 import br.com.tlmacedo.cafeperfeito.view.ViewSaidaProduto;
 import br.inf.portalfiscal.xsd.nfe.enviNFe.TEnviNFe;
@@ -60,7 +60,8 @@ public class ControllerSaidaProduto implements Initializable, ModeloCafePerfeito
 
     public TitledPane tpnInformacaoVenda;
     public JFXComboBox<Empresa> cboCliente;
-    public DatePicker dtpVencimento;
+    public JFXDatePicker dtpVencimento;
+    public JFXDatePicker dtpSaida;
     public Label labelClientePrazo;
     public Label lblClientePrazo;
     public Label labelClienteLimite;
@@ -109,7 +110,6 @@ public class ControllerSaidaProduto implements Initializable, ModeloCafePerfeito
 
     private EventHandler eventHandlerSaidaProduto;
     private ServiceAlertMensagem alertMensagem;
-    //    private ObjectProperty<SituacaoEntrada> situacaoEntrada = new SimpleObjectProperty<>(SituacaoEntrada.DIGITACAO);
     private ObjectProperty<StatusBarSaidaProduto> statusBar = new SimpleObjectProperty<>();
 
     private String nomeController = "saidaProduto";
@@ -843,11 +843,11 @@ public class ControllerSaidaProduto implements Initializable, ModeloCafePerfeito
         this.cboCliente = cboCliente;
     }
 
-    public DatePicker getDtpVencimento() {
+    public JFXDatePicker getDtpVencimento() {
         return dtpVencimento;
     }
 
-    public void setDtpVencimento(DatePicker dtpVencimento) {
+    public void setDtpVencimento(JFXDatePicker dtpVencimento) {
         this.dtpVencimento = dtpVencimento;
     }
 

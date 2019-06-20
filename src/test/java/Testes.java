@@ -7,6 +7,7 @@ import br.com.tlmacedo.cafeperfeito.model.vo.enums.NfeCteModelo;
 import br.com.tlmacedo.cafeperfeito.model.vo.enums.NfeDestinoOperacao;
 import br.com.tlmacedo.cafeperfeito.model.vo.enums.NfeModalidadeFrete;
 import br.com.tlmacedo.cafeperfeito.model.vo.enums.NfePresencaComprador;
+import br.com.tlmacedo.cafeperfeito.nfe.*;
 import br.com.tlmacedo.cafeperfeito.nfe.v400.*;
 import br.com.tlmacedo.cafeperfeito.service.ServiceBuscaWebService;
 import br.com.tlmacedo.cafeperfeito.service.ServiceFileSave;

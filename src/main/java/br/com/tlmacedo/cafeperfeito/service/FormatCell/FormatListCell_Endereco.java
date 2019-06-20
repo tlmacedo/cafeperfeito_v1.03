@@ -16,9 +16,6 @@ import javafx.scene.image.ImageView;
 public class FormatListCell_Endereco extends ListCell<Endereco> {
     private ImageView imageView = new ImageView();
 
-    public FormatListCell_Endereco() {
-    }
-
     @Override
     protected void updateItem(Endereco item, boolean empty) {
         super.updateItem(item, empty);
@@ -28,27 +25,34 @@ public class FormatListCell_Endereco extends ListCell<Endereco> {
         } else {
             switch (item.getTipo()) {
                 case PRINCIPAL:
-                    imageView.setImage(new Image(ServiceVariaveisSistema.PATHICONE + "ic_end_principal_dp14.png"));
+                    getImageView().setImage(new Image(ServiceVariaveisSistema.PATHICONE + "ic_end_principal_dp14.png"));
                     break;
                 case ENTREGA:
-                    imageView.setImage(new Image(ServiceVariaveisSistema.PATHICONE + "ic_end_entrega_dp14.png"));
+                    getImageView().setImage(new Image(ServiceVariaveisSistema.PATHICONE + "ic_end_entrega_dp14.png"));
                     break;
                 case COBRANCA:
-                    imageView.setImage(new Image(ServiceVariaveisSistema.PATHICONE + "ic_end_cobranca_dp14.png"));
+                    getImageView().setImage(new Image(ServiceVariaveisSistema.PATHICONE + "ic_end_cobranca_dp14.png"));
                     break;
                 case CORRESPONDENCIA:
-                    imageView.setImage(new Image(ServiceVariaveisSistema.PATHICONE + "ic_end_correspondencia_dp14.png"));
+                    getImageView().setImage(new Image(ServiceVariaveisSistema.PATHICONE + "ic_end_correspondencia_dp14.png"));
                     break;
                 case RESIDENCIAL:
-                    imageView.setImage(new Image(ServiceVariaveisSistema.PATHICONE + "ic_end_residencial_dp14.png"));
+                    getImageView().setImage(new Image(ServiceVariaveisSistema.PATHICONE + "ic_end_residencial_dp14.png"));
                     break;
                 case RECADO:
-                    imageView.setImage(new Image(ServiceVariaveisSistema.PATHICONE + "ic_end_recado_dp14.png"));
+                    getImageView().setImage(new Image(ServiceVariaveisSistema.PATHICONE + "ic_end_recado_dp14.png"));
                     break;
             }
-            setGraphic(imageView);
+            setGraphic(getImageView());
             setText(item.toString());
         }
     }
 
+    public ImageView getImageView() {
+        return imageView;
+    }
+
+    public void setImageView(ImageView imageView) {
+        this.imageView = imageView;
+    }
 }

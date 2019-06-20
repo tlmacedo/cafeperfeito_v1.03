@@ -1,4 +1,4 @@
-package br.com.tlmacedo.cafeperfeito.nfe.v400;
+package br.com.tlmacedo.cafeperfeito.nfe;
 
 import br.com.tlmacedo.cafeperfeito.model.vo.SaidaProdutoNfe;
 import br.com.tlmacedo.cafeperfeito.service.ServiceValidarDado;
