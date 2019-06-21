@@ -28,7 +28,7 @@ public class ServiceValidationFields {
     private final String STILE_BORDER_VALIDATION = "-fx-background-color: rgba(255,102,0,0.4)";
     //    private final Tooltip toolTip = new Tooltip("Este campo está inválido!!!");
     private HashMap<CriteriosValidationFields, String> hashMap;
-    private boolean fieldEditable;
+    private boolean fieldEditable = true;
     private int erros = 0;
     private Node campo;
     private JFXTextField jfxTextField;
@@ -52,11 +52,13 @@ public class ServiceValidationFields {
 
     public void checkFields(Node campo, String criterios) {
         setCampo(campo);
-        HashMap<String, String> tmpHashMap = ServiceMascara.getFieldFormatMap(campo.getAccessibleText());
-        try {
-            setFieldEditable(!(tmpHashMap.get("seteditable").equals("false")));
-        } catch (Exception ex) {
-            setFieldEditable(true);
+        if (campo.getAccessibleText() != null) {
+            HashMap<String, String> tmpHashMap = ServiceMascara.getFieldFormatMap(campo.getAccessibleText());
+            try {
+                setFieldEditable(!(tmpHashMap.get("seteditable").equals("false")));
+            } catch (Exception ex) {
+                setFieldEditable(true);
+            }
         }
 
         setHashMap(ServiceMascara.getHasMapCriteriosValidationFields(criterios));
@@ -114,13 +116,13 @@ public class ServiceValidationFields {
     /**
      * *******ADD AND REMOVE STYLES********
      */
-    private void addToolTipAndBorderColor(Node n) {
+    public void addToolTipAndBorderColor(Node n) {
 //        Tooltip.install(n, t);
         n.setStyle(STILE_BORDER_VALIDATION);
         setIsValido(false);
     }
 
-    private void removeToolTipAndBorderColor(Node n) {
+    public void removeToolTipAndBorderColor(Node n) {
         n.setStyle(null);
         setIsValido(true);
     }

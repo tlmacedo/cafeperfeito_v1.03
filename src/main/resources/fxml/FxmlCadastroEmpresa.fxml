@@ -180,7 +180,7 @@
                             </tooltip>
                         </JFXCheckBox>
                         <Label fx:id="lblDataCadastro"
-                               accessibleText="len::;type::;value::Data cadastro: ;seteditable::;"
+                               accessibleText="len::;type::;value::Data cadastro: ;seteditable::;binding::true;"
                                alignment="CENTER_RIGHT" layoutX="1000.0" layoutY="5.0" prefHeight="10.0"
                                prefWidth="335.0" styleClass="lbl-informacoes" text="lblDataCadastro"
                                textAlignment="RIGHT">
@@ -189,7 +189,7 @@
                             </tooltip>
                         </Label>
                         <Label fx:id="lblDataCadastroDiff"
-                               accessibleText="len::;type::;value::Tempo cadastro: ;seteditable::;"
+                               accessibleText="len::;type::;value::Tempo cadastro: ;seteditable::;binding::true;"
                                alignment="CENTER_RIGHT" layoutX="1000.0" layoutY="15.0" prefHeight="10.0"
                                prefWidth="335.0" styleClass="lbl-informacoes" text="lblDataCadastroDiff"
                                textAlignment="RIGHT">
@@ -198,7 +198,7 @@
                             </tooltip>
                         </Label>
                         <Label fx:id="lblDataAtualizacao"
-                               accessibleText="len::;type::;value::Data atualização: ;seteditable::;"
+                               accessibleText="len::;type::;value::Data atualização: ;seteditable::;binding::true;"
                                alignment="CENTER_RIGHT" layoutX="1000.0" layoutY="25.0" prefHeight="10.0"
                                prefWidth="335.0" styleClass="lbl-informacoes" text="lblDataAtualizacao"
                                textAlignment="RIGHT">
@@ -207,7 +207,7 @@
                             </tooltip>
                         </Label>
                         <Label fx:id="lblDataAtualizacaoDiff"
-                               accessibleText="len::;type::;value::Tempo atualização: ;seteditable::;"
+                               accessibleText="len::;type::;value::Tempo atualização: ;seteditable::;binding::true;"
                                alignment="CENTER_RIGHT" layoutX="1000.0" layoutY="35.0" prefHeight="10.0"
                                prefWidth="335.0" styleClass="lbl-informacoes" text="lblDataAtualizacaoDiff"
                                textAlignment="RIGHT">
@@ -597,7 +597,7 @@
                                                         <AnchorPane minHeight="0.0" minWidth="0.0">
                                                             <children>
                                                                 <Label fx:id="lblDataAbertura"
-                                                                       accessibleText="len::;type::;value::Data abertura: ;seteditable::;"
+                                                                       accessibleText="len::;type::;value::Data abertura: ;seteditable::;binding::true;"
                                                                        layoutX="3.0" layoutY="15.0" prefHeight="10.0"
                                                                        prefWidth="420.0" styleClass="lbl-informacoes">
                                                                     <tooltip>
@@ -606,7 +606,7 @@
                                                                     </tooltip>
                                                                 </Label>
                                                                 <Label fx:id="lblDataAberturaDiff"
-                                                                       accessibleText="len::;type::;value::Tempo abertura;seteditable::;"
+                                                                       accessibleText="len::;type::;value::Tempo abertura;seteditable::;binding::true;"
                                                                        layoutX="3.0" layoutY="25.0" prefHeight="10.0"
                                                                        prefWidth="420.0" styleClass="lbl-informacoes">
                                                                     <tooltip>
@@ -615,7 +615,7 @@
                                                                     </tooltip>
                                                                 </Label>
                                                                 <Label fx:id="lblNaturezaJuridica"
-                                                                       accessibleText="len::;type::;value::Natureza júridica: ;seteditable::;"
+                                                                       accessibleText="len::;type::;value::Natureza júridica: ;seteditable::;binding::true;"
                                                                        layoutX="3.0" layoutY="35.0" prefHeight="11.0"
                                                                        prefWidth="420.0" styleClass="lbl-informacoes">
                                                                     <tooltip>

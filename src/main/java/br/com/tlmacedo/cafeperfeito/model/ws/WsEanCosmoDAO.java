@@ -83,7 +83,6 @@ public class WsEanCosmoDAO extends ServiceBuscaWebService {
         if (produto.getImgProduto() != null)
             produto.setImgProdutoBack(produto.getImageProduto());
         imageTmp[1] = new ServiceEan13(busca.replaceAll("\\D", "")).createBarcodePNG();
-        System.out.printf("retorno: [%s]\n", retorno);
         if (!retorno.equals("")) {
             HashMap<String, String> hashMap = ServiceMascara.getFieldFormatMap(retorno);
             if (hashMap.containsKey("descricao"))

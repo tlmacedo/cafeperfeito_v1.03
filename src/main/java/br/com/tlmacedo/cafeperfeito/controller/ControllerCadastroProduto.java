@@ -735,7 +735,6 @@ public class ControllerCadastroProduto implements Initializable, ModeloCafePerfe
         getProduto().setProdutoCodigoBarraList(codigoBarraObservableList);
 
         String retorno = ServiceConsultaWebServices.getProdutoNcmCest_WsEanCosmos(finalCodBarra, WsCosmosBusca.GTINS);
-        System.out.printf("meu retorno [%s]\n", retorno);
         if (!retorno.equals("")) {
             alertMensagem = new ServiceAlertMensagem();
             alertMensagem.setStrIco("ic_webservice_24dp.png");
@@ -855,28 +854,28 @@ public class ControllerCadastroProduto implements Initializable, ModeloCafePerfe
         getCboFiscalCstOrigemValid.checkFields(
                 getCboFiscalCstOrigem(),
                 String.format("%s::%d;",
-                        MIN_CBO, 1)
+                        MIN_CBO, 0)
         );
 
         ServiceValidationFields getCboFiscalIcmsValid = new ServiceValidationFields();
         getCboFiscalIcmsValid.checkFields(
                 getCboFiscalIcms(),
                 String.format("%s::%d;",
-                        MIN_CBO, 1)
+                        MIN_CBO, 0)
         );
 
         ServiceValidationFields getCboFiscalPisValid = new ServiceValidationFields();
         getCboFiscalPisValid.checkFields(
                 getCboFiscalPis(),
                 String.format("%s::%d;",
-                        MIN_CBO, 1)
+                        MIN_CBO, 0)
         );
 
         ServiceValidationFields getCboFiscalCofinsValid = new ServiceValidationFields();
         getCboFiscalCofinsValid.checkFields(
                 getCboFiscalCofins(),
                 String.format("%s::%d;",
-                        MIN_CBO, 1)
+                        MIN_CBO, 0)
         );
 
         isValidoProperty().bind(Bindings.createBooleanBinding(() ->
