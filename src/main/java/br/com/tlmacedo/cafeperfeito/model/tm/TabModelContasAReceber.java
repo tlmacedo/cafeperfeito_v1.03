@@ -263,7 +263,7 @@ public class TabModelContasAReceber {
                 protected void updateItem(BigDecimal item, boolean empty) {
                     super.updateItem(item, empty);
                     if (empty)
-                        setText("0,00");
+                        setText("");
                     else
                         setText(ServiceMascara.getMoeda(item.setScale(2).toString(), 2));
                 }

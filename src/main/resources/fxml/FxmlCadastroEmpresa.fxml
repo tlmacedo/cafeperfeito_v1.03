@@ -93,7 +93,7 @@
                         <JFXTextField fx:id="txtCNPJ" layoutX="110.0" layoutY="10.0" maxHeight="-Infinity"
                                       maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="20.0"
                                       prefWidth="110.0" promptText="C.N.P.J / C.P.F." styleClass="a-direita"
-                                      text="C.N.P.J. / C.P.F.">
+                                      text="">
                             <tooltip>
                                 <Tooltip text="C.N.P.J ou C.P.F. da empresa"/>
                             </tooltip>
@@ -109,7 +109,7 @@
                         <JFXTextField fx:id="txtIE" layoutX="330.0" layoutY="10.0" maxHeight="-Infinity"
                                       maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="20.0"
                                       prefWidth="90.0" promptText="I.E. / R.G." styleClass="a-direita"
-                                      text="I.E. / R.G.">
+                                      text="">
                             <tooltip>
                                 <Tooltip text="inscrição estadual da empresa"/>
                             </tooltip>
@@ -117,7 +117,7 @@
                         <JFXTextField fx:id="txtRazao" accessibleText="len::80;type::TEXTO;value::;seteditable::;"
                                       layoutX="430.0" layoutY="10.0" maxHeight="-Infinity" maxWidth="-Infinity"
                                       minHeight="-Infinity" minWidth="-Infinity" prefHeight="20.0" prefWidth="455.0"
-                                      promptText="Razão / Nome" text="Razão / Nome">
+                                      promptText="Razão / Nome" text="">
                             <tooltip>
                                 <Tooltip text="razão ou nome da empresa"/>
                             </tooltip>
@@ -125,7 +125,7 @@
                         <JFXTextField fx:id="txtFantasia" accessibleText="len::80;type::TEXTO;value::;seteditable::;"
                                       layoutX="10.0" layoutY="40.0" maxHeight="-Infinity" maxWidth="-Infinity"
                                       minHeight="-Infinity" minWidth="-Infinity" prefHeight="20.0" prefWidth="455.0"
-                                      promptText="Fantasia / Apelido" text="Fantasia / Apelido">
+                                      promptText="Fantasia / Apelido" text="">
                             <tooltip>
                                 <Tooltip text="nome fantasia ou apelido da empresa"/>
                             </tooltip>

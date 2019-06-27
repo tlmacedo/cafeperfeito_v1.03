@@ -49,8 +49,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static br.com.tlmacedo.cafeperfeito.interfaces.Convert_Date_Key.*;
-import static br.com.tlmacedo.cafeperfeito.model.vo.enums.CriteriosValidationFields.MIN_CBO;
-import static br.com.tlmacedo.cafeperfeito.model.vo.enums.CriteriosValidationFields.VAL_CNPJ;
+import static br.com.tlmacedo.cafeperfeito.model.vo.enums.CriteriosValidationFields.*;
 import static br.com.tlmacedo.cafeperfeito.service.ServiceVariaveisSistema.TCONFIG;
 
 /**
@@ -306,6 +305,7 @@ public class ControllerCadastroEmpresa implements Initializable, ModeloCafePerfe
                     case F5:
                         if (!teclaFuncaoDisponivel(event.getCode())) return;
                         if (!guardarEmpresa()) break;
+                        if (!validarDados()) break;
                         if (salvarEmpresa()) {
                             switch (getStatusBar()) {
                                 case INCLUIR:
@@ -734,10 +734,7 @@ public class ControllerCadastroEmpresa implements Initializable, ModeloCafePerfe
             ex.printStackTrace();
             return false;
         }
-        if (getCboClassificacaoJuridica().equals(ClassificacaoJuridica.PESSOAJURIDICA))
-            return validacao();
-        else
-            return true;
+        return true;
     }
 
     private boolean guardarEndereco(Endereco endAntigo) {
@@ -840,28 +837,40 @@ public class ControllerCadastroEmpresa implements Initializable, ModeloCafePerfe
         getChkIsFornecedor().setSelected(getEmpresa().isFornecedor());
         getChkIsTransportadora().setSelected(getEmpresa().isTransportadora());
 
-        //getEmpresa().getEmailHomePageList().stream().forEach(emailHomePage -> System.out.printf("email: [%s]\n",emailHomePage));
-
         getEmailHomePageObservableList().setAll(getEmpresa().getEmailHomePageList());
         getTelefoneObservableList().setAll(getEmpresa().getTelefoneList());
 
         getContatoObservableList().setAll(getEmpresa().getContatoList());
 
-        if (getEmpresa().getNaturezaJuridica() != null)
+        if (getEmpresa().getNaturezaJuridica() == null)
+            setStpNatJuridica("");
+        else
             setStpNatJuridica(getEmpresa().getNaturezaJuridica());
-        if (getEmpresa().getDataAbetura() != null) {
+
+        if (getEmpresa().getDataAbetura() == null) {
+            setStpDtAbert("");
+            setStpDtAbertDiff("");
+        } else {
             setStpDtAbert(DTF_DATA.format(getEmpresa().getDataAbetura()));
-            setStpDtAbertDiff(ServiceDataHora.getIntervaloData(getEmpresa().getDataAbetura().toLocalDate(), null));
+            setStpDtAbertDiff(ServiceDataHora.getIntervaloData(getEmpresa().getDataAbetura().toLocalDate(), LocalDate.now()));
         }
-        if (getEmpresa().getDataCadastro() != null) {
+
+        if (getEmpresa().getUsuarioCadastro() == null) {
+            setStpDtCad("");
+            setStpDtCadDiff("");
+        } else {
             setStpDtCad(String.format("%s [%02d-%s]",
                     DTF_DATAHORA.format(getEmpresa().getDataCadastro()),
                     getEmpresa().getUsuarioCadastro().getId(),
                     StringUtils.capitalize(getEmpresa().getUsuarioCadastro().getApelido())
             ));
-            setStpDtCadDiff(ServiceDataHora.getIntervaloData(getEmpresa().getDataCadastro().toLocalDate(), null));
+            setStpDtCadDiff(ServiceDataHora.getIntervaloData(getEmpresa().getDataCadastro().toLocalDate(), LocalDate.now()));
         }
-        if (getEmpresa().getDataAtualizacao() != null) {
+
+        if (getEmpresa().getUsuarioAtualizacao() == null) {
+            setStpDtAtualiz("");
+            setStpDtAtualizDiff("");
+        } else {
             setStpDtAtualiz(String.format("%s [%02d-%s]",
                     DTF_DATAHORA.format(getEmpresa().getDataAtualizacao()),
                     getEmpresa().getUsuarioAtualizacao().getId(),
@@ -1315,7 +1324,7 @@ public class ControllerCadastroEmpresa implements Initializable, ModeloCafePerfe
      * Validações
      */
 
-    private boolean validacao() {
+    private boolean validarDados() {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         Validator validator = factory.getValidator();
 
@@ -1343,6 +1352,23 @@ public class ControllerCadastroEmpresa implements Initializable, ModeloCafePerfe
                         VAL_CNPJ, 1)
         );
 
+        ServiceValidationFields iEValid = new ServiceValidationFields();
+        getTxtIE().disableProperty().addListener((ov, o, n) -> {
+            if (n || getTxtIE().getText().length() >= 3)
+                iEValid.removeToolTipAndBorderColor(getTxtIE());
+            else {
+                iEValid.addToolTipAndBorderColor(getTxtIE());
+                getTxtIE().lengthProperty().addListener((ov1, o1, n1) -> {
+                    if (n1.intValue() >= 3)
+                        iEValid.removeToolTipAndBorderColor(getTxtIE());
+                    else {
+                        if (!getTxtIE().isDisabled())
+                            iEValid.addToolTipAndBorderColor(getTxtIE());
+                    }
+                });
+            }
+        });
+
         ServiceValidationFields getCboSituacaoSistemaValid = new ServiceValidationFields();
         getCboSituacaoSistemaValid.checkFields(
                 getCboSituacaoSistema(),
@@ -1350,95 +1376,21 @@ public class ControllerCadastroEmpresa implements Initializable, ModeloCafePerfe
                         MIN_CBO, 1)
         );
 
-        ServiceValidationFields iEValid = new ServiceValidationFields();
-        getChkIeIsento().disableProperty().addListener((ov, o, n) -> {
-            iEValid.addToolTipAndBorderColor(getTxtIE());
-            if (n)
-                iEValid.removeToolTipAndBorderColor(getTxtIE());
-            else {
-                getChkIeIsento().selectedProperty().addListener((ov0, o0, n0) -> {
-                    if (n0)
-                        iEValid.removeToolTipAndBorderColor(getTxtIE());
-                    else {
-                        getTxtIE().lengthProperty().addListener((ov1, o1, n1) -> {
-                            if (n1.intValue() == 0)
-                                iEValid.addToolTipAndBorderColor(getTxtIE());
-                            else
-                                iEValid.removeToolTipAndBorderColor(getTxtIE());
-                        });
-                    }
-                });
-            }
-        });
+        ServiceValidationFields getTxtLimiteValid = new ServiceValidationFields();
+        getTxtLimiteValid.checkFields(
+                getTxtLimite(),
+                String.format("%s::%s;",
+                        MIN_BIG, "0.01")
+        );
 
-        //        ServiceValidationFields getTxtCodigoValid = new ServiceValidationFields();
-//        getTxtCodigoValid.checkFields(
-//                getTxtCodigo(),
-//                String.format("%s::%d;",
-//                        MIN_SIZE, 3)
-//        );
-//        ServiceValidationFields getTxtDescricaoValid = new ServiceValidationFields();
-//        getTxtDescricaoValid.checkFields(
-//                getTxtDescricao(),
-//                String.format("%s::%d;",
-//                        MIN_SIZE, 3)
-//        );
-//
-//        ServiceValidationFields getTxtLucroLiquidoValid = new ServiceValidationFields();
-//        getTxtLucroLiquidoValid.checkFields(
-//                getTxtLucroLiquido(),
-//                String.format("%s::%s;",
-//                        MIN_BIG, "0.01")
-//        );
-//
-//        ServiceValidationFields getTxtFiscalNcmValid = new ServiceValidationFields();
-//        getTxtFiscalNcmValid.checkFields(
-//                getTxtFiscalNcm(),
-//                String.format("%s::%d;",
-//                        MIN_SIZE, 4)
-//        );
-//
-//        ServiceValidationFields getTxtFiscalCestValid = new ServiceValidationFields();
-//        getTxtFiscalCestValid.checkFields(
-//                getTxtFiscalCest(),
-//                String.format("%s::%d;",
-//                        MIN_SIZE, 4)
-//        );
-//
-//        ServiceValidationFields getCboFiscalCstOrigemValid = new ServiceValidationFields();
-//        getCboFiscalCstOrigemValid.checkFields(
-//                getCboFiscalCstOrigem(),
-//                String.format("%s::%d;",
-//                        MIN_CBO, 0)
-//        );
-//
-//        ServiceValidationFields getCboFiscalIcmsValid = new ServiceValidationFields();
-//        getCboFiscalIcmsValid.checkFields(
-//                getCboFiscalIcms(),
-//                String.format("%s::%d;",
-//                        MIN_CBO, 0)
-//        );
-//
-//        ServiceValidationFields getCboFiscalPisValid = new ServiceValidationFields();
-//        getCboFiscalPisValid.checkFields(
-//                getCboFiscalPis(),
-//                String.format("%s::%d;",
-//                        MIN_CBO, 0)
-//        );
-//
-//        ServiceValidationFields getCboFiscalCofinsValid = new ServiceValidationFields();
-//        getCboFiscalCofinsValid.checkFields(
-//                getCboFiscalCofins(),
-//                String.format("%s::%d;",
-//                        MIN_CBO, 0)
-//        );
 
         isValidoProperty().bind(Bindings.createBooleanBinding(() ->
                         (getTxtCNPJValid.isValidoProperty().get()
                                 && iEValid.isValidoProperty().get()
                                 && getCboSituacaoSistemaValid.isValidoProperty().get()
+                                && getTxtLimiteValid.isValidoProperty().get()
                         ), getTxtCNPJValid.isValidoProperty(), iEValid.isValidoProperty(),
-                getCboSituacaoSistemaValid.isValidoProperty()
+                getCboSituacaoSistemaValid.isValidoProperty(), getTxtLimiteValid.isValidoProperty()
         ));
     }
 

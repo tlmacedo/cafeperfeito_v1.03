@@ -633,13 +633,16 @@ public class ControllerCadastroProduto implements Initializable, ModeloCafePerfe
             ));
             setStpDtCadDiff(ServiceDataHora.getIntervaloData(getProduto().getDataCadastro().toLocalDate(), null));
         }
-        if (getProduto().getDataAtualizacao() != null) {
+        if (getProduto().getUsuarioAtualizacao() != null) {
             setStpDtAtualiz(String.format("%s [%02d-%s]",
                     DTF_DATAHORA.format(getProduto().getDataAtualizacao()),
                     getProduto().getUsuarioAtualizacao().getId(),
                     StringUtils.capitalize(getProduto().getUsuarioAtualizacao().getApelido())
             ));
             setStpDtAtualizDiff(ServiceDataHora.getIntervaloData(getProduto().getDataAtualizacao().toLocalDate(), null));
+        } else {
+            setStpDtAtualiz("");
+            setStpDtAtualizDiff("");
         }
 
         refreshImageProduto();
