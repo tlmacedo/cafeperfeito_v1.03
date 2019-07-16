@@ -298,7 +298,7 @@
                                             </tooltip>
                                         </JFXComboBox>
                                         <JFXDatePicker fx:id="dtpCteEmissao"
-                                                       accessibleText="len::;type::;value::;seteditable::;"
+                                                       accessibleText="len::;type::;value::;seteditable::;binding::true;"
                                                        defaultColor="#ff6600" layoutX="730.0" layoutY="10.0"
                                                        maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
                                                        minWidth="-Infinity" prefHeight="20.0" prefWidth="90.0"

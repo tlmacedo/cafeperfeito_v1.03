@@ -284,7 +284,11 @@ public class ControllerContasAReceber implements Initializable, ModeloCafePerfei
             }
         });
 
-        contasAReceberFilteredList.addListener((ListChangeListener<? super ContasAReceber>) c -> totalizaTabela());
+//        contasAReceberObservableList.addListener(c -> );
+
+        contasAReceberFilteredList.addListener((ListChangeListener<? super ContasAReceber>) c ->
+                totalizaTabela()
+        );
 
         recebimentoObservableList.addListener((ListChangeListener<? super Recebimento>) c -> totalizaConta());
 
@@ -309,18 +313,25 @@ public class ControllerContasAReceber implements Initializable, ModeloCafePerfei
             int finalI = i;
             menuItensSituacao[i].setOnAction(event -> {
                 try {
-                    if (PagamentoSituacao.toEnum(finalI).equals(PagamentoSituacao.PENDENTE))
+                    if (PagamentoSituacao.toEnum(finalI).equals(PagamentoSituacao.PENDENTE)
+                            || PagamentoSituacao.toEnum(finalI).equals(PagamentoSituacao.CANCELADO))
                         if (LogadoInf.getUserLog().guestAcessProperty().get() > GuestAccess.GERENTE.getCod())
                             return;
-
-//                    Integer indexRec = getContasAReceber().getRecebimentoList()
-//                            .indexOf(
-//                                    getContasAReceber().getRecebimentoList().stream()
-//                                            .filter(rec -> rec.getId() == tvRecebimento.getSelectionModel().getSelectedItem().getId())
-//                                            .findFirst().orElse(null)
-//                            );
-//                    Recebimento recebimento = getContasAReceber().getRecebimentoList().get(indexRec);
                     quitarRecibo(tvRecebimento.getSelectionModel().getSelectedItem(), PagamentoSituacao.toEnum(finalI));
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            });
+        }
+
+        for (int i = 1; i < menuItensTipo.length; i++) {
+            int finalI = i;
+            menuItensTipo[i].setOnAction(event -> {
+                try {
+                    Recebimento recebimento = getTvRecebimento().getSelectionModel().getSelectedItem();
+                    recebimento.setPagamentoTipo(PagamentoTipo.toEnum(finalI));
+                    recebimento = new RecebimentoDAO().persiste(recebimento);
+                    setContasAReceber(new ContasAReceberDAO().persiste(getContasAReceber()));
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
@@ -748,18 +759,28 @@ public class ControllerContasAReceber implements Initializable, ModeloCafePerfei
 
     private void quitarRecibo(Recebimento recebimento, PagamentoSituacao formaPagto) {
         recebimento.setPagamentoSituacao(formaPagto);
-        recebimento.setValorRecebido(recebimento.getValor());
-        recebimento.setUsuarioPagamento(LogadoInf.getUserLog());
-        recebimento.setDtPagamento(LocalDate.now());
-        if (LocalDate.now().compareTo(LocalDate.of(2019, 05, 8)) == 0) {
-            recebimento.setDtPagamento(getContasAReceber().getDtVencimento());
-        }
-        recebimento.setUsuarioAtualizacao(LogadoInf.getUserLog());
-        recebimento = new RecebimentoDAO().persiste(recebimento);
-
-        if (recebimento.valorRecebidoProperty().get().compareTo(getTotalContaAberto()) >= 0
-                && formaPagto != PagamentoSituacao.PENDENTE) {
-            getContasAReceber().setPagamentoSituacao(formaPagto);
+        switch (formaPagto) {
+            case QUITADO:
+                recebimento.setValorRecebido(recebimento.getValor());
+                recebimento.setUsuarioPagamento(LogadoInf.getUserLog());
+                recebimento.setDtPagamento(LocalDate.now());
+                recebimento.setUsuarioAtualizacao(LogadoInf.getUserLog());
+                recebimento = new RecebimentoDAO().persiste(recebimento);
+                if (recebimento.valorRecebidoProperty().get().compareTo(getTotalContaAberto()) >= 0)
+                    getContasAReceber().setPagamentoSituacao(formaPagto);
+                break;
+            case PENDENTE:
+                if (recebimento.valorRecebidoProperty().get().compareTo(getTotalContaPago()) >= 0)
+                    getContasAReceber().setPagamentoSituacao(formaPagto);
+            case CANCELADO:
+                recebimento.setValorRecebido(BigDecimal.ZERO);
+                recebimento.setUsuarioPagamento(null);
+                recebimento.setDtPagamento(null);
+                recebimento.setUsuarioAtualizacao(LogadoInf.getUserLog());
+                recebimento = new RecebimentoDAO().persiste(recebimento);
+                if (formaPagto.equals(PagamentoSituacao.CANCELADO))
+                    getContasAReceber().setPagamentoSituacao(formaPagto);
+                break;
         }
         setContasAReceber(new ContasAReceberDAO().persiste(getContasAReceber()));
         ttvContasAReceber.getSelectionModel().getSelectedItem().setValue(getContasAReceber());
